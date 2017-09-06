@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ViewChild, ComponentFactoryResolver, ComponentRef, Input } from "@angular/core";
+import { AfterViewInit, Component, ComponentFactoryResolver, ComponentRef, ViewChild } from '@angular/core';
 
-import { DynamicHostDirective } from "../../directives/dynamic-host.directive";
-import { OverlayModalService } from "../../../services/ux/overlay-modal";
+import { DynamicHostDirective } from '../../directives/dynamic-host.directive';
+import { OverlayModalService } from '../../../services/ux/overlay-modal';
 
 @Component({
   moduleId: module.id,
@@ -15,18 +15,14 @@ import { OverlayModalService } from "../../../services/ux/overlay-modal";
   `
 })
 export class OverlayModalComponent implements AfterViewInit {
-  @ViewChild(DynamicHostDirective)
-  private host: DynamicHostDirective;
+  hidden: boolean = true;
 
+  @ViewChild(DynamicHostDirective) private host: DynamicHostDirective;
   private componentRef: ComponentRef<{}>;
   private componentInstance;
 
-  hidden: boolean = true;
-
-  constructor(
-    private service: OverlayModalService,
-    private _componentFactoryResolver: ComponentFactoryResolver
-  ) { }
+  constructor(private service: OverlayModalService,
+              private _componentFactoryResolver: ComponentFactoryResolver) {}
 
   ngAfterViewInit() {
     this.service.setContainer(this);
@@ -39,7 +35,9 @@ export class OverlayModalComponent implements AfterViewInit {
       throw new Error('Unknown component class');
     }
 
-    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(componentClass),
+    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(
+      componentClass
+      ),
       viewContainerRef = this.host.viewContainerRef;
 
     viewContainerRef.clear();

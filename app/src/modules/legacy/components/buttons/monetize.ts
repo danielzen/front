@@ -8,7 +8,7 @@ import { Client } from '../../../../services/api';
   inputs: ['_object: object'],
   host: {
     '(click)': 'monetize()',
-    'class': 'm-button'
+    class: 'm-button'
   },
   template: `
     <button class="material-icons" [ngClass]="{'selected': isMonetized }">
@@ -16,48 +16,40 @@ import { Client } from '../../../../services/api';
     </button>
   `
 })
-
 export class MonetizeButton {
-
   object;
   session = SessionFactory.build();
   isMonetized = false;
 
-  constructor(public client : Client) {
-  }
+  constructor(public client: Client) {}
 
-  set _object(value : any){
-    if(!value)
-      return;
+  set _object(value: any) {
+    if (!value) return;
     this.object = value;
     this.isMonetized = value.monetized;
   }
 
-  monetize(){
-    if (this.isMonetized)
-      return this.unMonetize();
+  monetize() {
+    if (this.isMonetized) return this.unMonetize();
 
     this.isMonetized = true;
 
-    this.client.put('api/v1/monetize/' + this.object.guid, {})
-      .then((response : any) => {
-
-      })
-      .catch((e) => {
+    this.client
+      .put('api/v1/monetize/' + this.object.guid, {})
+      .then((response: any) => null)
+      .catch(e => {
         this.isMonetized = false;
       });
   }
 
-  unMonetize(){
+  unMonetize() {
     this.isMonetized = false;
     this.object.monetized = false;
-    this.client.delete('api/v1/monetize/' + this.object.guid, {})
-      .then((response : any) => {
-
-      })
-      .catch((e) => {
+    this.client
+      .delete('api/v1/monetize/' + this.object.guid, {})
+      .then((response: any) => null)
+      .catch(e => {
         this.isMonetized = true;
       });
   }
-
 }

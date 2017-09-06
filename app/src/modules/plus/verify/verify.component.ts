@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Client } from '../../../common/api/client.service';
@@ -8,18 +14,19 @@ import { Client } from '../../../common/api/client.service';
   templateUrl: 'verify.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class PlusVerifyComponent {
-
   form: FormGroup;
   open: boolean = true;
   inProgress: boolean = false;
   @Output() closed: EventEmitter<any> = new EventEmitter(true);
 
-  constructor(private client : Client, private cd : ChangeDetectorRef, private fb: FormBuilder){
-  }
+  constructor(
+    private client: Client,
+    private cd: ChangeDetectorRef,
+    private fb: FormBuilder
+  ) {}
 
-  ngOnInit(){
+  ngOnInit() {
     this.form = this.fb.group({
       link1: ['', Validators.required],
       link2: ['', Validators.required],
@@ -27,11 +34,12 @@ export class PlusVerifyComponent {
     });
   }
 
-  submit(e){
+  submit(e) {
     this.inProgress = true;
     this.detectChanges();
-    this.client.post('api/v1/plus/verify', this.form.value)
-      .then((response) => {
+    this.client
+      .post('api/v1/plus/verify', this.form.value)
+      .then(response => {
         this.inProgress = false;
         this.open = false;
         this.closed.next(true);
@@ -40,12 +48,11 @@ export class PlusVerifyComponent {
       .catch(() => {
         this.inProgress = false;
         this.detectChanges();
-      })
+      });
   }
 
-  detectChanges(){
+  detectChanges() {
     this.cd.markForCheck();
     this.cd.detectChanges();
   }
-
 }

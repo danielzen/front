@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
 
@@ -12,25 +12,27 @@ import { SessionFactory } from '../../services/session';
   selector: 'minds-settings',
   templateUrl: 'settings.html'
 })
-
-export class Settings{
-
-  minds : Minds;
-  session =  SessionFactory.build();
-  user : any;
-  filter : string;
-
-  constructor(public client: Client, public router: Router, public route: ActivatedRoute, public title: MindsTitle){
-  }
-
+export class Settings {
+  minds: Minds;
+  session = SessionFactory.build();
+  user: any;
+  filter: string;
   paramsSubscription: Subscription;
+
+  constructor(
+    public client: Client,
+    public router: Router,
+    public route: ActivatedRoute,
+    public title: MindsTitle
+  ) {}
+
   ngOnInit() {
-    if(!this.session.isLoggedIn()){
+    if (!this.session.isLoggedIn()) {
       this.router.navigate(['/login']);
     }
     this.minds = window.Minds;
 
-    this.title.setTitle("Settings");
+    this.title.setTitle('Settings');
 
     this.filter = 'general';
 

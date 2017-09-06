@@ -6,19 +6,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '../../common/common.module';
 import { MonetizationOverviewModule } from '../monetization/monetization.overview.module';
 import { CheckoutModule } from '../checkout/checkout.module';
-import { AdsModule } from "../ads/ads.module";
+import { AdsModule } from '../ads/ads.module';
 
 import { WalletComponent } from './wallet.component';
 import { PointsOverviewComponent } from './points-overview.component';
 import { WalletTransactionsComponent } from './transactions/transactions.component';
 import { WalletPointsTransactionsComponent } from './transactions/points.component';
 import { WalletPurchaseComponent } from './purchase/purchase.component';
-import { WalletBoostComponent } from "./boost/boost.component";
-import { WalletWireComponent } from "./wire/wire.component";
+import { WalletBoostComponent } from './boost/boost.component';
+import { WalletWireComponent } from './wire/wire.component';
 
-
-const walletRoutes : Routes = [
-  { path: 'wallet', component: WalletComponent,
+const walletRoutes: Routes = [
+  {
+    path: 'wallet',
+    component: WalletComponent,
     children: [
       { path: '', redirectTo: 'transactions', pathMatch: 'full' },
       { path: 'transactions', component: WalletTransactionsComponent },
@@ -29,7 +30,7 @@ const walletRoutes : Routes = [
       { path: 'wire', component: WalletWireComponent }
     ]
   }
-]
+];
 
 @NgModule({
   imports: [
@@ -60,7 +61,6 @@ const walletRoutes : Routes = [
     WalletBoostComponent,
     WalletWireComponent
   ],
-  entryComponents: [ WalletComponent ]
+  entryComponents: [WalletComponent]
 })
-
 export class WalletModule {}

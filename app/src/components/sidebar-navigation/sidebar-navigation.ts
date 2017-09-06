@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { Navigation as NavigationService } from '../../services/navigation';
 import { SessionFactory } from '../../services/session';
@@ -9,34 +9,36 @@ import { SocketsService } from '../../services/sockets';
   selector: 'minds-sidebar-navigation',
   templateUrl: 'sidebar-navigation.html'
 })
-
 export class SidebarNavigation {
-	user;
-	session = SessionFactory.build();
-	items;
+  user;
+  session = SessionFactory.build();
+  items;
 
-	constructor(public navigation : NavigationService, public sockets : SocketsService){
-		var self = this;
+  constructor(
+    public navigation: NavigationService,
+    public sockets: SocketsService
+  ) {
+    var self = this;
     this.items = navigation.getItems('sidebar');
-		this.getUser();
+    this.getUser();
 
-		//listen out for new messages
+    //listen out for new messages
     //this.messengerListener();
-	}
+  }
 
-	getUser(){
-		var self = this;
-		this.user = this.session.getLoggedInUser((user) => {
-				self.user = user;
-			});
-	}
+  getUser() {
+    var self = this;
+    this.user = this.session.getLoggedInUser(user => {
+      self.user = user;
+    });
+  }
 
-  messengerListener(){
+  messengerListener() {
     this.sockets.subscribe('messageReceived', (from_guid, message) => {
-      if(message.type != "message"){
+      if (message.type !== 'message') {
         return;
       }
-      this.navigation.setCounter("Messenger", 1);
+      this.navigation.setCounter('Messenger', 1);
     });
   }
 }

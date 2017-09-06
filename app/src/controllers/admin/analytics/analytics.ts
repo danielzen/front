@@ -8,9 +8,7 @@ import { Client, Upload } from '../../../services/api';
   selector: 'minds-admin-analytics',
   templateUrl: 'analytics.html'
 })
-
 export class AdminAnalytics {
-
   dam;
   dam_list;
   mam;
@@ -29,7 +27,7 @@ export class AdminAnalytics {
     impressions_met: 0
   };
 
-  constructor(public client: Client){
+  constructor(public client: Client) {
     this.getActives();
     this.getSignups();
     this.getRetention();
@@ -39,34 +37,33 @@ export class AdminAnalytics {
   /**
    * Return active user analytics
    */
-  getActives(){
+  getActives() {
     var self = this;
-    this.client.get('api/v1/admin/analytics/active')
-      .then((response : any) => {
-        self.dam = response['daily'];
-        self.dam_list = response['daily'].slice(0).reverse();
-        self.mam = response['monthly'];
-        self.mam_list = response['monthly'].slice(0).reverse();
-      });
+    this.client.get('api/v1/admin/analytics/active').then((response: any) => {
+      self.dam = response['daily'];
+      self.dam_list = response['daily'].slice(0).reverse();
+      self.mam = response['monthly'];
+      self.mam_list = response['monthly'].slice(0).reverse();
+    });
   }
 
   /**
    * Return signups
    */
-  getSignups(){
-    this.client.get('api/v1/admin/analytics/signups')
-      .then((response : any) => {
-        this.signups = response['daily'];
-        this.signups_list = response['daily'].slice(0).reverse();
-      });
+  getSignups() {
+    this.client.get('api/v1/admin/analytics/signups').then((response: any) => {
+      this.signups = response['daily'];
+      this.signups_list = response['daily'].slice(0).reverse();
+    });
   }
 
   /**
    * Return retention rates
    */
-  getRetention(){
-    this.client.get('api/v1/admin/analytics/retention')
-      .then((response : any) => {
+  getRetention() {
+    this.client
+      .get('api/v1/admin/analytics/retention')
+      .then((response: any) => {
         this.retention = response.retention[0];
         console.log(this.retention);
       });
@@ -75,14 +72,14 @@ export class AdminAnalytics {
   /**
    * Return boost analytics
    */
-  getBoosts(){
+  getBoosts() {
     var self = this;
-    this.client.get('api/v1/admin/analytics/boost')
-      .then((response : any) => {
-        self.boost_newsfeed = response.newsfeed;
-        self.boost_newsfeed.total = self.boost_newsfeed.review + self.boost_newsfeed.approved;
-        self.boost_newsfeed.percent = (self.boost_newsfeed.approved / self.boost_newsfeed.total) * 100;
-      });
+    this.client.get('api/v1/admin/analytics/boost').then((response: any) => {
+      self.boost_newsfeed = response.newsfeed;
+      self.boost_newsfeed.total =
+        self.boost_newsfeed.review + self.boost_newsfeed.approved;
+      self.boost_newsfeed.percent =
+        self.boost_newsfeed.approved / self.boost_newsfeed.total * 100;
+    });
   }
-
 }

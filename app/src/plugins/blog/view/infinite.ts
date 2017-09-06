@@ -79,10 +79,8 @@ export class BlogViewInfinite {
         this.inProgress = false;
       })
       .catch((e) => {
-        if (e.status === 0) {
-          this.error = "Sorry, there was a timeout error.";
-        } else if(this.blogs.length == 0){
-          this.error = "Sorry, there was a problem loading the blog";
+        if(this.blogs.length == 0){
+            this.error = "Sorry, there was a problem loading the blog";
         }
         this.inProgress = false;
       });

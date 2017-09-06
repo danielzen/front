@@ -11,9 +11,6 @@ export class Notification {
   notification: any;
   session = SessionFactory.build();
 
-  constructor() {
-  }
-
   set _notification(value: any) {
     this.notification = value;
   }

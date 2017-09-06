@@ -1,16 +1,14 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { CurrencyPipe } from "@angular/common";
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 
-import { ChartColumn } from "../../common/components/chart/chart.component";
-import { Client } from "../../services/api";
+import { ChartColumn } from '../../common/components/chart/chart.component';
+import { Client } from '../../services/api';
 
 @Component({
   moduleId: module.id,
   selector: 'm-monetization--analytics',
   templateUrl: 'analytics.component.html',
-  providers: [
-    CurrencyPipe
-  ]
+  providers: [CurrencyPipe]
 })
 export class MonetizationAnalytics {
   transactions: any[] = [];
@@ -21,19 +19,19 @@ export class MonetizationAnalytics {
 
   error: string;
 
-  chart: { title: string, columns: ChartColumn[], rows: any[][] } | null = null;
+  chart: { title: string; columns: ChartColumn[]; rows: any[][] } | null = null;
   chartInProgress: boolean = false;
 
-  constructor(private client: Client, private currencyPipe: CurrencyPipe, private cd: ChangeDetectorRef) { }
+  constructor(private client: Client,
+              private currencyPipe: CurrencyPipe,
+              private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.load(true);
   }
 
   load(refresh: boolean = false) {
-    let tasks: Promise<any>[] = [
-      this.loadList(refresh)
-    ];
+    let tasks: Promise<any>[] = [this.loadList(refresh)];
 
     if (refresh) {
       tasks.push(this.loadChart());
@@ -56,11 +54,12 @@ export class MonetizationAnalytics {
       this.moreData = true;
     }
     this.detectChanges();
-    return this.client.get(`api/v1/monetization/service/analytics/list`, {
-      offset: this.offset,
-      limit: 12
-    })
-      .then(({ transactions, 'load-next': loadNext }) => {
+    return this.client
+      .get(`api/v1/monetization/service/analytics/list`, {
+        offset: this.offset,
+        limit: 12
+      })
+      .then(({transactions, 'load-next': loadNext}) => {
         this.inProgress = false;
 
         if (transactions) {
@@ -91,8 +90,9 @@ export class MonetizationAnalytics {
     this.chartInProgress = true;
     this.error = '';
     this.detectChanges();
-    return this.client.get(`api/v1/monetization/service/analytics/chart`, { })
-      .then(({ chart }) => {
+    return this.client
+      .get(`api/v1/monetization/service/analytics/chart`, {})
+      .then(({chart}) => {
         this.chartInProgress = false;
         this.chart = this._parseChart(chart);
         this.detectChanges();
@@ -104,20 +104,26 @@ export class MonetizationAnalytics {
       });
   }
 
+  detectChanges() {
+    this.cd.markForCheck();
+    this.cd.detectChanges();
+  }
+
   private _parseChart(data) {
     if (!data) {
       return null;
     }
 
-    let chart = { // @todo: type correctly
+    let chart = {
+      // @todo: type correctly
       title: data.title || void 0,
       columns: [],
       rows: []
     };
 
-    for (let dataColumn of (data.columns || [])) {
-      let column = { ...dataColumn }; // clone
-      if (column.type == 'currency') {
+    for (let dataColumn of data.columns || []) {
+      let column = {...dataColumn}; // clone
+      if (column.type === 'currency') {
         column.type = 'number';
       }
 
@@ -126,8 +132,14 @@ export class MonetizationAnalytics {
 
     for (let dataRow of data.rows) {
       for (let colIndex = 0; colIndex < dataRow.length; colIndex++) {
-        if (data.columns[colIndex] && data.columns[colIndex].type == 'currency') {
-          dataRow[colIndex] = { v: dataRow[colIndex], f: this.currencyPipe.transform(dataRow[colIndex], 'USD', true) }
+        if (
+          data.columns[colIndex] &&
+          data.columns[colIndex].type === 'currency'
+        ) {
+          dataRow[colIndex] = {
+            v: dataRow[colIndex],
+            f: this.currencyPipe.transform(dataRow[colIndex], 'USD', true)
+          };
         }
       }
 
@@ -137,8 +149,4 @@ export class MonetizationAnalytics {
     return chart;
   }
 
-  detectChanges(){
-    this.cd.markForCheck();
-    this.cd.detectChanges();
-  }
 }

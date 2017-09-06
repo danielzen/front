@@ -1,13 +1,4 @@
-import {
-  Component,
-  OnChanges,
-  ViewChild,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  SimpleChange,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild } from '@angular/core';
 
 declare var tinymce;
 
@@ -28,9 +19,8 @@ declare var tinymce;
       class="m-placeholder"
     >{{ placeholder }}</span>
   `,
-  exportAs: "Textarea"
+  exportAs: 'Textarea'
 })
-  
 export class Textarea implements OnChanges {
   @ViewChild('editor') editorControl: ElementRef;
 
@@ -45,7 +35,7 @@ export class Textarea implements OnChanges {
   }
 
   setControlText(value: string) {
-    this.editorControl.nativeElement.innerText = value; 
+    this.editorControl.nativeElement.innerText = value;
   }
 
   focus() {
@@ -56,7 +46,7 @@ export class Textarea implements OnChanges {
   blur() {
     this.editorControl.nativeElement.blur();
   }
-  
+
   change() {
     this.update.emit(this.getControlText());
   }
@@ -65,10 +55,13 @@ export class Textarea implements OnChanges {
     e.preventDefault();
 
     if (e.clipboardData && e.clipboardData.getData) {
-      var text = e.clipboardData.getData("text/plain");
-      document.execCommand("insertHTML", false, text);
-    } else if ((<any> window).clipboardData && (<any> window).clipboardData.getData) {
-      var text = (<any> window).clipboardData.getData("Text");
+      let text = e.clipboardData.getData('text/plain');
+      document.execCommand('insertHTML', false, text);
+    } else if (
+      (<any>window).clipboardData &&
+      (<any>window).clipboardData.getData
+    ) {
+      let text = (<any>window).clipboardData.getData('Text');
       this.insertTextAtCursor(text);
     }
   }
@@ -76,13 +69,11 @@ export class Textarea implements OnChanges {
   ngOnChanges(changes: any) {
     if (
       changes.model &&
-      this.getControlText() !== changes.model.currentValue && 
-      (
-        changes.model.isFirstChange() ||
-        changes.model.previousValue !== changes.model.currentValue
-      )
+      this.getControlText() !== changes.model.currentValue &&
+      (changes.model.isFirstChange() ||
+        changes.model.previousValue !== changes.model.currentValue)
     ) {
-       this.setControlText(this.model);
+      this.setControlText(this.model);
     }
 
     if (changes.disabled && changes.disabled.currentValue) {
@@ -102,20 +93,26 @@ export class Textarea implements OnChanges {
         range.deleteContents();
         range.insertNode(document.createTextNode(text));
       }
-    } else if ((<any>document).selection && (<any>document).selection.createRange) {
+    } else if (
+      (<any>document).selection &&
+      (<any>document).selection.createRange
+    ) {
       (<any>document).selection.createRange().text = text;
     }
   }
 
   private _placeCaretAtEnd(el: HTMLElement) {
-    if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+    if (
+      typeof window.getSelection !== 'undefined' &&
+      typeof document.createRange !== 'undefined'
+    ) {
       var range = document.createRange();
       range.selectNodeContents(el);
       range.collapse(false);
       var sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
-    } else if (typeof (<any>document.body).createTextRange != "undefined") {
+    } else if (typeof (<any>document.body).createTextRange !== 'undefined') {
       var textRange = (<any>document.body).createTextRange();
       textRange.moveToElementText(el);
       textRange.collapse(false);

@@ -1,6 +1,10 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
-import { WireRewardsType, WireRewardsStruc, WireRewardsTiers } from "../../interfaces/wire.interfaces";
+import {
+  WireRewardsType,
+  WireRewardsStruc,
+  WireRewardsTiers
+} from '../../interfaces/wire.interfaces';
 
 @Component({
   moduleId: module.id,
@@ -8,7 +12,6 @@ import { WireRewardsType, WireRewardsStruc, WireRewardsTiers } from "../../inter
   templateUrl: 'rewards.component.html'
 })
 export class WireCreatorRewardsComponent {
-
   @Input() rewards: WireRewardsStruc;
   @Input() type: WireRewardsType | null;
   @Input() amount: string | number;
@@ -34,11 +37,9 @@ export class WireCreatorRewardsComponent {
       .filter(reward => this.calcAmount() >= reward.amount)
       .pop();
 
-    return lastEligibleReward ?
-      index === lastEligibleReward.index :
-      false;
+    return lastEligibleReward ? index === lastEligibleReward.index : false;
   }
-  
+
   calcAmount(): number {
     if (this.sums && this.sums[this.type]) {
       return parseFloat(this.sums[this.type]) + parseFloat(<string>this.amount);
@@ -50,5 +51,4 @@ export class WireCreatorRewardsComponent {
   selectReward(index: number): void {
     this.selectAmount.next(this.rewards.rewards[this.type][index].amount);
   }
-
 }

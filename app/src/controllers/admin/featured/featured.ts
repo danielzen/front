@@ -5,26 +5,20 @@ import { Client } from '../../../services/api';
 @Component({
   moduleId: module.id,
   selector: 'minds-admin-featured',
-  templateUrl: 'featured.html',
+  templateUrl: 'featured.html'
 })
-
 export class AdminFeatured {
-
   categories: any[] | null;
   category: string = '';
   featured: any[] = [];
 
-  inProgress : boolean = false;
-  moreData : boolean = true;
+  inProgress: boolean = false;
+  moreData: boolean = true;
 
-  constructor(public client: Client){
-  }
+  constructor(public client: Client) {}
 
   ngOnInit() {
     this.loadCategories(window.Minds.categories);
-  }
-
-  ngOnDestroy() {
   }
 
   load(refresh: boolean = false) {
@@ -44,9 +38,10 @@ export class AdminFeatured {
       this.moreData = true;
     }
 
-    this.client.get(`api/v1/categories/featured`, {
-      categories: [ this.category ]
-    })
+    this.client
+      .get(`api/v1/categories/featured`, {
+        categories: [this.category]
+      })
       .then((response: any) => {
         //@todo: refactor if pagination (offset) is implemented
         this.moreData = false;
@@ -76,7 +71,7 @@ export class AdminFeatured {
     for (let key in categories) {
       this.categories.push({
         key,
-        value: categories[key],
+        value: categories[key]
       });
     }
   }

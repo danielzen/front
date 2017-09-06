@@ -10,7 +10,6 @@ import { TranslationService } from '../../services/translation';
   exportAs: 'translate',
   templateUrl: 'translate.html'
 })
-
 export class Translate {
   onTranslateInit: EventEmitter<any> = new EventEmitter();
   onTranslate: EventEmitter<any> = new EventEmitter();
@@ -42,7 +41,7 @@ export class Translate {
   constructor(
     public translationService: TranslationService,
     public changeDetectorRef: ChangeDetectorRef
-  ) { }
+  ) {}
 
   set _open(value: any) {
     let wasOpened = !this.open && value;
@@ -66,12 +65,12 @@ export class Translate {
     }
 
     this.translateEvent = value;
-    
+
     if (!value) {
       return;
     }
 
-    this.translateEventSubscription = this.translateEvent.subscribe(($event) => {
+    this.translateEventSubscription = this.translateEvent.subscribe($event => {
       this.translate($event);
     });
   }
@@ -79,7 +78,8 @@ export class Translate {
   ngOnInit() {
     this.languagesInProgress = true;
 
-    this.translationService.getLanguages()
+    this.translationService
+      .getLanguages()
       .then((languages: any[]) => {
         this.languagesInProgress = false;
         this.parseLanguages(languages);
@@ -93,7 +93,7 @@ export class Translate {
         this.changeDetectorRef.markForCheck();
 
         console.error('TranslateModal::onInit', e);
-      })
+      });
   }
 
   ngOnDestroy() {
@@ -103,12 +103,11 @@ export class Translate {
   }
 
   onOpen() {
-    this.translationService.getUserDefaultLanguage()
-      .then((lang) => {
-        if (lang) {
-          this.select(lang);
-        }
-      });
+    this.translationService.getUserDefaultLanguage().then(lang => {
+      if (lang) {
+        this.select(lang);
+      }
+    });
   }
 
   changeDefaultLanguage() {
@@ -157,15 +156,15 @@ export class Translate {
     }
 
     this.translation.target = '';
-    this.translationService.getLanguageName($event.selected)
-      .then(name => {
-        this.translation.target = name;
-        this.changeDetectorRef.markForCheck();
-      });
+    this.translationService.getLanguageName($event.selected).then(name => {
+      this.translation.target = name;
+      this.changeDetectorRef.markForCheck();
+    });
 
     this.translationInProgress = true;
 
-    this.translationService.translate(this.entity.guid, $event.selected)
+    this.translationService
+      .translate(this.entity.guid, $event.selected)
       .then((translation: any) => {
         this.translationInProgress = false;
         this.translation.source = null;
@@ -176,7 +175,8 @@ export class Translate {
 
           if (this.translation.source === null && translation[field].source) {
             this.translation.source = '';
-            this.translationService.getLanguageName(translation[field].source)
+            this.translationService
+              .getLanguageName(translation[field].source)
               .then(name => {
                 this.translation.source = name;
                 this.changeDetectorRef.markForCheck();
@@ -191,7 +191,6 @@ export class Translate {
         });
 
         this.changeDetectorRef.markForCheck();
-
       })
       .catch(e => {
         this.translationInProgress = false;

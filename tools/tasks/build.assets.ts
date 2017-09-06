@@ -12,4 +12,4 @@ export = function buildAssets(gulp, plugins) {
       ])
       .pipe(gulp.dest(APP_DEST));
   };
-}
+};

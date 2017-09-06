@@ -23,25 +23,19 @@ import { Client } from '../../services/api';
     </div>
   `
 })
+export class AnnouncementComponent {
+  minds: Minds = window.Minds;
+  hidden: boolean = false;
+  @Input() id: string = 'default';
 
-export class AnnouncementComponent{
+  constructor(private storage: Storage) {}
 
-  minds : Minds = window.Minds;
-  hidden : boolean = false;
-  @Input() id : string = 'default';
-
-	constructor(private storage : Storage){
-	}
-
-  ngOnInit(){
-    if(this.storage.get('hide-announcement:' + this.id))
-      this.hidden = true;
+  ngOnInit() {
+    if (this.storage.get('hide-announcement:' + this.id)) this.hidden = true;
   }
 
-  close(){
+  close() {
     this.storage.set('hide-announcement:' + this.id, true);
     this.hidden = true;
   }
-
-
 }

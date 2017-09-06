@@ -14,11 +14,11 @@ export const MINDS_PLUGIN_PROVIDERS: any[] = [
   {
     provide: MessengerEncryptionService,
     useFactory: MessengerEncryptionService._,
-    deps: [ Client ]
+    deps: [Client]
   },
   {
     provide: GroupsService,
     useFactory: GroupsService._,
-    deps: [ Client, Upload ]
+    deps: [Client, Upload]
   }
 ];

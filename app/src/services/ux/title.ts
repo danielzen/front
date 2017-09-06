@@ -1,46 +1,39 @@
 import { Title } from '@angular/platform-browser';
 
 export class MindsTitle {
-
   private counter: number;
   private sep = ' | ';
   private default_title = 'Minds';
   private text: string = '';
 
-  constructor(public title: Title) { }
+  static _(title: Title) {
+    return new MindsTitle(title);
+  }
 
-  setTitle(value : string){
+  constructor(public title: Title) {}
+
+  setTitle(value: string) {
     let title;
 
-    if (value){
+    if (value) {
       title = [value, this.default_title].join(this.sep);
-    }
-    else {
+    } else {
       title = this.default_title;
     }
     this.text = title;
     this.applyTitle();
   }
-   
 
-  setCounter(value: number){
+  setCounter(value: number) {
     this.counter = value;
     this.applyTitle();
-
   }
 
-  applyTitle(){
-    if(this.counter){
+  applyTitle() {
+    if (this.counter) {
       this.title.setTitle(`(${this.counter}) ${this.text}`);
     } else {
       this.title.setTitle(this.text);
     }
-    
   }
-
-
-  static _(title: Title) {
-    return new MindsTitle(title);
-  }
-
 }

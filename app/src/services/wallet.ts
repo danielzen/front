@@ -1,22 +1,31 @@
-import { Inject, Injector, EventEmitter } from '@angular/core';
-import { Subscription } from "rxjs/Rx";
+import { EventEmitter, Inject } from '@angular/core';
+import { Subscription } from 'rxjs/Rx';
 
 import { Client } from './api';
 import { SessionFactory } from './session';
-import { SocketsService } from "./sockets";
+import { SocketsService } from './sockets';
 
 export class WalletService {
-
   points: number | null = null;
   session = SessionFactory.build();
 
   apiInProgress: boolean = false;
-  private pointsEmitter: EventEmitter<{ batch, total }> = new EventEmitter<{ batch, total }>();
+  private pointsEmitter: EventEmitter<{ batch; total }> = new EventEmitter<{
+    batch;
+    total;
+  }>();
 
-  constructor(@Inject(Client) public client : Client, @Inject(SocketsService) private sockets: SocketsService){
+  private pointsTxSubscription: Subscription;
+
+  static _(client: Client, sockets: SocketsService) {
+    return new WalletService(client, sockets);
+  }
+
+  constructor(@Inject(Client) public client: Client,
+              @Inject(SocketsService) private sockets: SocketsService) {
     this.getBalance();
 
-    this.session.isLoggedIn((is) => {
+    this.session.isLoggedIn(is => {
       if (is) {
         this.getBalance(true);
       } else {
@@ -28,7 +37,7 @@ export class WalletService {
     this.listen();
   }
 
-  onPoints(): EventEmitter<{ batch, total }> {
+  onPoints(): EventEmitter<{ batch; total }> {
     return this.pointsEmitter;
   }
 
@@ -48,14 +57,14 @@ export class WalletService {
   /**
    * Increment the wallet
    */
-  increment(points : number = 1){
+  increment(points: number = 1) {
     this.delta(+points);
   }
 
   /**
    * Decrement the wallet
    */
-  decrement(points : number = 1){
+  decrement(points: number = 1) {
     this.delta(-points);
   }
 
@@ -67,8 +76,9 @@ export class WalletService {
       this.points = null;
       this.apiInProgress = true;
 
-      return this.client.get(`api/v1/wallet/count`)
-        .then(({ count }) => {
+      return this.client
+        .get(`api/v1/wallet/count`)
+        .then(({count}) => {
           this.apiInProgress = false;
 
           if (typeof count === 'undefined') {
@@ -95,19 +105,21 @@ export class WalletService {
   }
 
   sync(points?: number | null) {
-    this.pointsEmitter.emit({ batch: points, total: this.points });
+    this.pointsEmitter.emit({batch: points, total: this.points});
   }
 
   // real-time
-  private pointsTxSubscription: Subscription;
   listen() {
-    this.pointsTxSubscription = this.sockets.subscribe('pointsTx', (points, entity_guid, description) => {
-      if (this.apiInProgress) {
-        return;
-      }
+    this.pointsTxSubscription = this.sockets.subscribe(
+      'pointsTx',
+      (points, entity_guid, description) => {
+        if (this.apiInProgress) {
+          return;
+        }
 
-      this.delta(points);
-    });
+        this.delta(points);
+      }
+    );
   }
 
   // @todo: when? implement at some global ngOnDestroy()
@@ -115,9 +127,5 @@ export class WalletService {
     if (this.pointsTxSubscription) {
       this.pointsTxSubscription.unsubscribe();
     }
-  }
-
-  static _(client: Client, sockets: SocketsService) {
-    return new WalletService(client, sockets);
   }
 }

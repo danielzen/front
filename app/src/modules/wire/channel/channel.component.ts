@@ -1,11 +1,14 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 
-import { Session, SessionFactory } from "../../../services/session";
-import { OverlayModalService } from "../../../services/ux/overlay-modal";
-import { WireCreatorComponent } from "../creator/creator.component";
-import { Client } from "../../../services/api";
-import { WireRewardsType, WireRewardsStruc } from "../interfaces/wire.interfaces";
-import { WireTypeLabels } from "../wire";
+import { Session, SessionFactory } from '../../../services/session';
+import { OverlayModalService } from '../../../services/ux/overlay-modal';
+import { WireCreatorComponent } from '../creator/creator.component';
+import { Client } from '../../../services/api';
+import {
+  WireRewardsType,
+  WireRewardsStruc
+} from '../interfaces/wire.interfaces';
+import { WireTypeLabels } from '../wire';
 
 @Component({
   moduleId: module.id,
@@ -15,7 +18,8 @@ import { WireTypeLabels } from "../wire";
 export class WireChannelComponent {
   rewards: WireRewardsStruc;
 
-  @Input('rewards') set _rewards(rewards: WireRewardsStruc) {
+  @Input('rewards')
+  set _rewards(rewards: WireRewardsStruc) {
     if (rewards) {
       this.rewards = rewards;
     } else {
@@ -23,7 +27,10 @@ export class WireChannelComponent {
     }
   }
 
-  @Output('rewardsChange') rewardsChangeEmitter: EventEmitter<WireRewardsStruc> = new EventEmitter<WireRewardsStruc>();
+  @Output('rewardsChange')
+  rewardsChangeEmitter: EventEmitter<WireRewardsStruc> = new EventEmitter<
+    WireRewardsStruc
+  >();
 
   @Input() channel: any;
 
@@ -34,7 +41,10 @@ export class WireChannelComponent {
 
   session: Session = SessionFactory.build();
 
-  constructor(private overlayModal: OverlayModalService, private client: Client) { }
+  constructor(
+    private overlayModal: OverlayModalService,
+    private client: Client
+  ) {}
 
   ngOnInit() {
     if (!this.rewards) {
@@ -68,16 +78,21 @@ export class WireChannelComponent {
         points: [],
         money: []
       }
-    }
+    };
   }
 
   save() {
-    this.rewards.rewards.points = this._cleanAndSortRewards(this.rewards.rewards.points);
-    this.rewards.rewards.money = this._cleanAndSortRewards(this.rewards.rewards.money);
+    this.rewards.rewards.points = this._cleanAndSortRewards(
+      this.rewards.rewards.points
+    );
+    this.rewards.rewards.money = this._cleanAndSortRewards(
+      this.rewards.rewards.money
+    );
 
-    this.client.post('api/v1/wire/rewards', {
-      rewards: this.rewards
-    })
+    this.client
+      .post('api/v1/wire/rewards', {
+        rewards: this.rewards
+      })
       .then(() => {
         this.rewardsChangeEmitter.emit(this.rewards);
       })
@@ -88,28 +103,39 @@ export class WireChannelComponent {
   }
 
   sendWire() {
-    const creator = this.overlayModal.create(WireCreatorComponent, this.channel);
+    const creator = this.overlayModal.create(
+      WireCreatorComponent,
+      this.channel
+    );
     creator.present();
   }
 
   isOwner() {
-    return this.session.getLoggedInUser() && (this.session.getLoggedInUser().guid == this.channel.guid);
+    return (
+      this.session.getLoggedInUser() &&
+      this.session.getLoggedInUser().guid === this.channel.guid
+    );
   }
 
   shouldShow(type?: WireRewardsType) {
     const isOwner = this.isOwner();
 
     if (!type) {
-      return isOwner || (this.rewards.description || this.rewards.rewards.points.length || this.rewards.rewards.money.length);
+      return (
+        isOwner ||
+        (this.rewards.description ||
+          this.rewards.rewards.points.length ||
+          this.rewards.rewards.money.length)
+      );
     }
 
-    const canShow = (type == 'points') || this.channel.merchant;
+    const canShow = type === 'points' || this.channel.merchant;
 
     return canShow && (isOwner || this.rewards.rewards[type].length);
   }
 
   getCurrentTypeLabel() {
-    return this.typeLabels.find(typeLabel => typeLabel.type == this.display);
+    return this.typeLabels.find(typeLabel => typeLabel.type === this.display);
   }
 
   // Internal
@@ -121,7 +147,10 @@ export class WireChannelComponent {
 
     return rewards
       .filter(reward => reward.amount || `${reward.description}`.trim())
-      .map(reward => ({ ...reward, amount: Math.abs(Math.floor(reward.amount || 0)) }))
-      .sort((a, b) => a.amount > b.amount ? 1 : -1)
+      .map(reward => ({
+        ...reward,
+        amount: Math.abs(Math.floor(reward.amount || 0))
+      }))
+      .sort((a, b) => (a.amount > b.amount ? 1 : -1));
   }
 }

@@ -1,13 +1,13 @@
-import { Injectable } from "@angular/core";
-import { Router, Event, NavigationEnd } from "@angular/router";
+import { Injectable } from '@angular/core';
+import { Router, Event, NavigationEnd } from '@angular/router';
 
-import { Subscription } from "rxjs/Rx";
+import { Subscription } from 'rxjs/Rx';
 
-import { Session, SessionFactory } from "./session";
+import { Session, SessionFactory } from './session';
 
 type NavigateOptions = {
-  extraParams?: string,
-  defaultUrl ?: string
+  extraParams?: string;
+  defaultUrl?: string;
 };
 
 @Injectable()
@@ -17,10 +17,14 @@ export class LoginReferrerService {
   private exceptions: string[] = [];
 
   private session: Session = SessionFactory.build();
-
-  constructor(private router: Router) { }
-
   private _routerListener: Subscription;
+
+  static _(router: Router) {
+    return new LoginReferrerService(router);
+  }
+
+  constructor(private router: Router) {}
+
   listen(): this {
     this._routerListener = this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
@@ -58,7 +62,8 @@ export class LoginReferrerService {
   }
 
   navigate(options: NavigateOptions = {}): Promise<boolean> {
-    let url = this.url || options.defaultUrl || LoginReferrerService.DEFAULT_URL;
+    let url =
+      this.url || options.defaultUrl || LoginReferrerService.DEFAULT_URL;
 
     if (options.extraParams) {
       url += `${~url.indexOf('?') ? '&' : '?'}${options.extraParams}`;
@@ -81,10 +86,6 @@ export class LoginReferrerService {
     }
 
     return !!~this.exceptions.indexOf(cleanUrl);
-  }
-
-  static _(router: Router) {
-    return new LoginReferrerService(router);
   }
 
   // based on: https://stackoverflow.com/a/36391166

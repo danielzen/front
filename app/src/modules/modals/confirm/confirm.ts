@@ -8,9 +8,8 @@ import { Component, EventEmitter } from '@angular/core';
   templateUrl: 'confirm.html'
 })
 export class ConfirmModal {
-
-  open : boolean = false;
-  closed : EventEmitter<any> = new EventEmitter();
+  open: boolean = false;
+  closed: EventEmitter<any> = new EventEmitter();
   actioned: EventEmitter<any> = new EventEmitter();
   inProgressEmitter: EventEmitter<any> = new EventEmitter();
   completedEmitter: EventEmitter<any> = new EventEmitter();
@@ -27,20 +26,20 @@ export class ConfirmModal {
     this.inProgressEmitter.subscribe((value: boolean) => {
       this.inProgress = value;
     });
-    
+
     this.completedEmitter.subscribe((value: number) => {
       if (this.closeAfterAction) {
         this.close(null);
         return;
       }
-      
+
       this.errorlevel = value;
     });
   }
 
-  close($event){
+  close($event) {
     this.open = false;
-    
+
     this.closed.emit({
       $event: $event
     });

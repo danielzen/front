@@ -1,43 +1,43 @@
-import { Component, Inject } from '@angular/core';
-import { Router, ActivatedRoute } from "@angular/router";
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
 
 import { Client, Upload } from '../../../services/api';
 import { SessionFactory } from '../../../services/session';
-import { LICENSES, ACCESS } from '../../../services/list-options';
+import { ACCESS, LICENSES } from '../../../services/list-options';
 
 @Component({
   moduleId: module.id,
   selector: 'minds-media-edit',
   templateUrl: 'edit.html'
 })
-
 export class MediaEdit {
-
   minds;
   session = SessionFactory.build();
-  guid : string;
-  entity : any  = {
-    title: "",
-    description: "",
-    subtype: "",
-    license: "all-rights-reserved",
+  guid: string;
+  entity: any = {
+    title: '',
+    description: '',
+    subtype: '',
+    license: 'all-rights-reserved',
     mature: false
   };
-  inProgress : boolean;
-  error : string;
+  inProgress: boolean;
+  error: string;
 
   licenses = LICENSES;
   access = ACCESS;
-
-  constructor(public client: Client, public upload: Upload, public router: Router, public route: ActivatedRoute){
-  }
-
   paramsSubscription: Subscription;
+
+  constructor(public client: Client,
+              public upload: Upload,
+              public router: Router,
+              public route: ActivatedRoute) {}
+
   ngOnInit() {
     this.minds = window.Minds;
-    
+
     this.paramsSubscription = this.route.params.subscribe(params => {
       if (params['guid']) {
         this.guid = params['guid'];
@@ -50,44 +50,43 @@ export class MediaEdit {
     this.paramsSubscription.unsubscribe();
   }
 
-  load(){
+  load() {
     this.inProgress = true;
-    this.client.get('api/v1/entities/entity/' + this.guid, { children: false })
-      .then((response : any) => {
+    this.client
+      .get('api/v1/entities/entity/' + this.guid, {children: false})
+      .then((response: any) => {
         this.inProgress = false;
         console.log(response);
-        if(response.entity){
-          if (!response.entity.description)
-            response.entity.description = "";
+        if (response.entity) {
+          if (!response.entity.description) response.entity.description = '';
 
-          if(!response.entity.license)
-            response.entity.license = "all-rights-reserved";
+          if (!response.entity.license)
+            response.entity.license = 'all-rights-reserved';
 
-          response.entity.mature = response.entity.flags && response.entity.flags.mature ? 1 : 0;
+          response.entity.mature =
+            response.entity.flags && response.entity.flags.mature ? 1 : 0;
 
           this.entity = response.entity;
         }
       })
-      .catch((e) => {
-
-      });
+      .catch(e => null);
   }
 
-  save(){
-    this.client.post('api/v1/media/' + this.guid, this.entity)
-      .then((response : any) => {
+  save() {
+    this.client
+      .post('api/v1/media/' + this.guid, this.entity)
+      .then((response: any) => {
         console.log(response);
         this.router.navigate(['/media', this.guid]);
       })
-      .catch((e) => {
-        this.error ="There was an error while trying to update";
+      .catch(e => {
+        this.error = 'There was an error while trying to update';
       });
   }
 
-  setThumbnail(file){
+  setThumbnail(file) {
     console.log(file);
     this.entity.file = file[0];
     this.entity.thumbnail = file[1];
   }
-
 }

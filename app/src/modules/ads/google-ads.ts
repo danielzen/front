@@ -2,7 +2,7 @@ import { Component, EventEmitter, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'google-ad',
-  inputs: [ 'type', 'location' ],
+  inputs: ['type', 'location'],
   template: `
     <ins
        *ngIf="type == 'square'"
@@ -23,38 +23,36 @@ import { Component, EventEmitter, ElementRef } from '@angular/core';
     </script>
   `,
   host: {
-    '[class]': "'m-ad-block m-ad-block-google ' + type + ' m-ad-block-' + location"
+    '[class]':
+      '\'m-ad-block m-ad-block-google \' + type + \' m-ad-block-\' + location'
   }
 })
+export class GoogleAds {
+  visible: boolean = false;
+  type: string = 'square';
+  location: string = 'default';
 
-export class GoogleAds{
-
-  visible : boolean = false;
-  type: string = "square";
-  location: string = "default";
-
-  constructor(element : ElementRef) {
+  constructor(element: ElementRef) {
     GoogleAdsService.load().then(() => {
       this.visible = true;
       console.log('ads ready to show');
     });
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     GoogleAdsService.unload();
   }
-
 }
 
-class GoogleAdsService{
-
+class GoogleAdsService {
   static script;
 
-  static load(){
-    return new Promise((resolve) => {
-      if(!GoogleAdsService.script){
+  static load() {
+    return new Promise(resolve => {
+      if (!GoogleAdsService.script) {
         GoogleAdsService.script = document.createElement('script');
-        GoogleAdsService.script.src = '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+        GoogleAdsService.script.src =
+          '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
         GoogleAdsService.script.async = true;
         document.body.appendChild(GoogleAdsService.script);
         resolve(true);
@@ -65,8 +63,8 @@ class GoogleAdsService{
     });
   }
 
-  static unload(){
-    if(GoogleAdsService.script){
+  static unload() {
+    if (GoogleAdsService.script) {
       GoogleAdsService.script.remove();
       GoogleAdsService.script = null;
     }

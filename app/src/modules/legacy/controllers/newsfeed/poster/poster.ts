@@ -5,25 +5,23 @@ import { MindsActivityObject } from '../../../../../interfaces/entities';
 import { SessionFactory } from '../../../../../services/session';
 
 import { AttachmentService } from '../../../../../services/attachment';
-import { ThirdPartyNetworksSelector } from "../../../../../modules/third-party-networks/selector";
+import { ThirdPartyNetworksSelector } from '../../../../../modules/third-party-networks/selector';
 
 @Component({
   moduleId: module.id,
   selector: 'minds-newsfeed-poster',
-  inputs: [ '_container_guid: containerGuid', 'accessId', 'message' ],
-  outputs: [ 'load' ],
+  inputs: ['_container_guid: containerGuid', 'accessId', 'message'],
+  outputs: ['load'],
   providers: [
     {
       provide: AttachmentService,
       useFactory: AttachmentService._,
-      deps: [ Client, Upload ]
+      deps: [Client, Upload]
     }
   ],
   templateUrl: 'poster.html'
 })
-
 export class Poster {
-
   content = '';
   meta: any = {
     wire_threshold: null
@@ -38,9 +36,14 @@ export class Poster {
 
   errorMessage: string = null;
 
-  @ViewChild('thirdPartyNetworksSelector') thirdPartyNetworksSelector: ThirdPartyNetworksSelector;
+  @ViewChild('thirdPartyNetworksSelector')
+  thirdPartyNetworksSelector: ThirdPartyNetworksSelector;
 
-  constructor(public client: Client, public upload: Upload, public attachment: AttachmentService) {
+  constructor(
+    public client: Client,
+    public upload: Upload,
+    public attachment: AttachmentService
+  ) {
     this.minds = window.Minds;
   }
 
@@ -54,7 +57,7 @@ export class Poster {
 
   set message(value: any) {
     if (value) {
-      value = decodeURIComponent((value).replace(/\+/g, '%20'));
+      value = decodeURIComponent(value.replace(/\+/g, '%20'));
       this.meta.message = value;
       this.getPostPreview({ value: value }); //a little ugly here!
     }
@@ -73,7 +76,8 @@ export class Poster {
     data = this.thirdPartyNetworksSelector.inject(data);
 
     this.inProgress = true;
-    this.client.post('api/v1/newsfeed', data)
+    this.client
+      .post('api/v1/newsfeed', data)
       .then((data: any) => {
         data.activity.boostToggle = true;
         this.load.next(data.activity);
@@ -81,18 +85,20 @@ export class Poster {
         this.meta = { wire_threshold: null };
         this.inProgress = false;
       })
-      .catch(function (e) {
+      .catch(function(e) {
         this.inProgress = false;
       });
   }
 
   uploadAttachment(file: HTMLInputElement, event) {
-    if (file.value) { // this prevents IE from executing this code twice
+    if (file.value) {
+      // this prevents IE from executing this code twice
       this.canPost = false;
       this.inProgress = true;
       this.errorMessage = null;
 
-      this.attachment.upload(file)
+      this.attachment
+        .upload(file)
         .then(guid => {
           this.inProgress = false;
           this.canPost = true;
@@ -116,15 +122,18 @@ export class Poster {
 
     this.errorMessage = '';
 
-    this.attachment.remove(file).then(() => {
-      this.inProgress = false;
-      this.canPost = true;
-      file.value = "";
-    }).catch(e => {
-      console.error(e);
-      this.inProgress = false;
-      this.canPost = true;
-    });
+    this.attachment
+      .remove(file)
+      .then(() => {
+        this.inProgress = false;
+        this.canPost = true;
+        file.value = '';
+      })
+      .catch(e => {
+        console.error(e);
+        this.inProgress = false;
+        this.canPost = true;
+      });
   }
 
   getPostPreview(message) {

@@ -3,18 +3,17 @@ import { CommonModule as NgCommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { CheckoutModule } from '../checkout/checkout.module'
-import { ModalsModule } from '../modals/modals.module'
+import { CheckoutModule } from '../checkout/checkout.module';
+import { ModalsModule } from '../modals/modals.module';
 import { CommonModule } from '../../common/common.module';
 import { SettingsBillingComponent } from './billing/billing.component';
 import { SettingsBillingSavedCardsComponent } from './billing/saved-cards/saved-cards.component';
 import { SettingsBillingSubscriptionsComponent } from './billing/subscriptions/subscriptions.component';
 import { SettingsNavigationComponent } from './navigation/navigation.component';
 
-
-const settingsRoutes : Routes = [
-  { path: 'settings/billing',  component: SettingsBillingComponent }
-]
+const settingsRoutes: Routes = [
+  { path: 'settings/billing', component: SettingsBillingComponent }
+];
 
 @NgModule({
   imports: [
@@ -38,9 +37,6 @@ const settingsRoutes : Routes = [
     SettingsBillingSubscriptionsComponent,
     SettingsNavigationComponent
   ],
-  entryComponents: [
-    SettingsNavigationComponent
-  ]
+  entryComponents: [SettingsNavigationComponent]
 })
-
 export class SettingsModule {}

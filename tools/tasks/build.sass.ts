@@ -12,4 +12,4 @@ export = function buildSass(gulp, plugins, option) {
       .pipe(plugins.autoprefixer(AUTOPREFIXER_BROWSERS))
       .pipe(gulp.dest(APP_DEST));
   };
-}
+};

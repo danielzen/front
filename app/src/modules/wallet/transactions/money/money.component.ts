@@ -7,17 +7,14 @@ import { Client } from '../../../../services/api';
   selector: 'minds-wallet-transactions-money',
   templateUrl: 'money.component.html'
 })
-
 export class WalletTransactionsMoney {
-
   ledger: any[] = [];
 
   inProgress: boolean = false;
   moreData: boolean = true;
   offset: string = '';
 
-  constructor(private client: Client) {
-  }
+  constructor(private client: Client) {}
 
   ngOnInit() {
     this.load(true);
@@ -36,7 +33,8 @@ export class WalletTransactionsMoney {
       this.offset = '';
     }
 
-    this.client.get('api/v1/monetization/ledger/list', { offset: this.offset })
+    this.client
+      .get('api/v1/monetization/ledger/list', { offset: this.offset })
       .then((response: any) => {
         this.inProgress = false;
 

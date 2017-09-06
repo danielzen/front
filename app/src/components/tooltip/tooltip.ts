@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'minds-tooltip',
-  inputs: [ 'properties' ],
+  inputs: ['properties'],
   template: `
     <div class="m-bubble-popup"
     *ngIf="properties && properties.shown"
@@ -11,6 +11,4 @@ import { Component } from '@angular/core';
     </div>
   `
 })
-export class MindsTooltip {
-  
-}
+export class MindsTooltip {}

@@ -13,7 +13,7 @@ export class SettingsSubscriptions {
   inProgress: boolean = false;
   moreData: boolean = true;
   offset: string = '';
-  
+
   minds: any;
 
   constructor(private client: Client) {
@@ -22,9 +22,6 @@ export class SettingsSubscriptions {
 
   ngOnInit() {
     this.load(true);
-  }
-
-  ngOnDestroy() {
   }
 
   load(refresh: boolean = false) {
@@ -38,7 +35,8 @@ export class SettingsSubscriptions {
       this.subscriptions = [];
     }
 
-    this.client.get('api/v1/payments/subscriptions/exclusive', { offset: this.offset })
+    this.client
+      .get('api/v1/payments/subscriptions/exclusive', { offset: this.offset })
       .then((response: any) => {
         if (!response.subscriptions) {
           this.inProgress = false;

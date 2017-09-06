@@ -7,23 +7,21 @@ import { SessionFactory } from '../../../../../../services/session';
   moduleId: module.id,
   selector: 'minds-card-album',
   host: {
-    'class': 'mdl-card mdl-shadow--2dp'
+    class: 'mdl-card mdl-shadow--2dp'
   },
   inputs: ['object'],
   templateUrl: 'album.html'
 })
-
 export class AlbumCard {
-  entity : any;
+  entity: any;
   session = SessionFactory.build();
   minds: {};
 
-	constructor(public client: Client){
+  constructor(public client: Client) {
     this.minds = window.Minds;
-	}
+  }
 
   set object(value: any) {
     this.entity = value;
   }
-
 }

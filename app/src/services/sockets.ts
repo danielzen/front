@@ -1,8 +1,7 @@
-import { EventEmitter, Inject, NgZone } from '@angular/core';
+import { EventEmitter, NgZone } from '@angular/core';
 import { SessionFactory } from './session';
 
 export class SocketsService {
-
   SOCKET_IO_SERVER = window.Minds.socket_server;
   LIVE_ROOM_NAME = 'live';
 
@@ -13,22 +12,22 @@ export class SocketsService {
   subscriptions: any = {};
   rooms: string[] = [];
 
-  constructor(private nz: NgZone){
+  constructor(private nz: NgZone) {
     nz.runOutsideAngular(() => {
       this.setUp();
     });
   }
 
-  setUp(){
+  setUp() {
     if (this.socket) {
       this.socket.destroy();
     }
 
     this.socket = window.io.connect(this.SOCKET_IO_SERVER, {
-      'reconnect': true,
-      'reconnection': true,
-      'timeout': 40000,
-      'autoConnect': false
+      reconnect: true,
+      reconnection: true,
+      timeout: 40000,
+      autoConnect: false
     });
 
     this.rooms = [];
@@ -40,7 +39,7 @@ export class SocketsService {
     }
 
     this.session.isLoggedIn((is: any) => {
-      if(is){
+      if (is) {
         this.reconnect();
       } else {
         this.disconnect();
@@ -67,7 +66,7 @@ export class SocketsService {
       });
     });
 
-    this.socket.on('registered', (guid) => {
+    this.socket.on('registered', guid => {
       this.nz.run(() => {
         this.registered = true;
         this.socket.emit('join', this.rooms);
@@ -131,7 +130,7 @@ export class SocketsService {
   }
 
   subscribe(name: string, callback: Function) {
-    if (!this.subscriptions[name]){
+    if (!this.subscriptions[name]) {
       this.subscriptions[name] = new EventEmitter();
 
       this.nz.runOutsideAngular(() => {
@@ -144,7 +143,9 @@ export class SocketsService {
     }
 
     return this.subscriptions[name].subscribe({
-      next: (args) => { callback.apply(this, args); }
+      next: args => {
+        callback.apply(this, args);
+      }
     });
   }
 
@@ -169,7 +170,4 @@ export class SocketsService {
     return this.emit('leave', room);
   }
 
-  static _(nz: NgZone) {
-    return new SocketsService(nz);
-  }
 }

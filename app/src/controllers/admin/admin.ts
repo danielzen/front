@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
-
-import { Client, Upload } from '../../services/api';
-import { MindsTitle } from "../../services/ux/title";
+import { MindsTitle } from '../../services/ux/title';
 
 @Component({
   selector: 'minds-admin',
@@ -21,15 +18,12 @@ import { MindsTitle } from "../../services/ux/title";
     <m-admin--verify *ngIf="filter == 'verify'"></m-admin--verify>
   `
 })
-
 export class Admin {
-
-  filter : string = "";
-
-  constructor(private route: ActivatedRoute, public title: MindsTitle){
-  }
-
+  filter: string = '';
   paramsSubscription: Subscription;
+
+  constructor(private route: ActivatedRoute, public title: MindsTitle) {}
+
   ngOnInit() {
     this.title.setTitle('Admin');
     this.paramsSubscription = this.route.params.subscribe((params: any) => {

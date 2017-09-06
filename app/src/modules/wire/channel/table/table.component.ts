@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { WireRewardsTiers, WireRewardsType } from "../../interfaces/wire.interfaces";
+import { WireRewardsTiers, WireRewardsType } from '../../interfaces/wire.interfaces';
 import { WireCreatorComponent } from '../../creator/creator.component';
 import { OverlayModalService } from '../../../../services/ux/overlay-modal';
 import { Session, SessionFactory } from '../../../../services/session';
@@ -12,12 +12,11 @@ import { Session, SessionFactory } from '../../../../services/session';
 export class WireChannelTableComponent {
   @Input() type: WireRewardsType;
   @Input() channel;
-
-  private session: Session;
-
   rewards: WireRewardsTiers = [];
+  editing: boolean = false;
 
-  @Input('rewards') set _rewards(rewards: WireRewardsTiers) {
+  @Input('rewards')
+  set _rewards(rewards: WireRewardsTiers) {
     this.rewards = rewards;
 
     if (!this.rewards) {
@@ -25,10 +24,11 @@ export class WireChannelTableComponent {
     }
   }
 
-  @Output('rewardsChange') rewardsChangeEmitter: EventEmitter<WireRewardsTiers> = new EventEmitter<WireRewardsTiers>();
+  @Output('rewardsChange')
+  rewardsChangeEmitter: EventEmitter<WireRewardsTiers> = new EventEmitter<WireRewardsTiers>();
 
-  editing: boolean = false;
-  @Input('editing') set _editing(value: boolean) {
+  @Input('editing')
+  set _editing(value: boolean) {
     this.editing = value;
 
     if (this.editing && !this.rewards.length) {
@@ -37,6 +37,8 @@ export class WireChannelTableComponent {
       this.rewardsChangeEmitter.emit(this.rewards);
     }
   }
+
+  private session: Session;
 
   constructor(private overlayModal: OverlayModalService) {
     this.session = SessionFactory.build();
@@ -76,13 +78,17 @@ export class WireChannelTableComponent {
   openWireModal(reward) {
     const user = this.session.getLoggedInUser();
     if (user.guid !== this.channel.guid) {
-      const creator = this.overlayModal.create(WireCreatorComponent, this.channel, {
-        default: {
-          min: reward.amount,
-          type: this.type
-        },
-        disableThresholdCheck: true
-      });
+      const creator = this.overlayModal.create(
+        WireCreatorComponent,
+        this.channel,
+        {
+          default: {
+            min: reward.amount,
+            type: this.type
+          },
+          disableThresholdCheck: true
+        }
+      );
       creator.present();
     }
   }

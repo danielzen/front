@@ -7,23 +7,18 @@ import { Client } from '../../services/api';
   selector: 'm-tagcloud',
   templateUrl: 'tagcloud.component.html'
 })
+export class TagcloudComponent {
+  tags: Array<string> = [];
 
-export class TagcloudComponent{
+  constructor(public client: Client) {}
 
-  tags : Array<string> = [];
-
-	constructor(public client : Client){
-	}
-
-  ngOnInit(){
+  ngOnInit() {
     this.load();
   }
 
-  load(){
-    this.client.get('api/v1/search/tagcloud')
-      .then((response : any) => {
-        this.tags = response.tags;
-      });
+  load() {
+    this.client.get('api/v1/search/tagcloud').then((response: any) => {
+      this.tags = response.tags;
+    });
   }
-
 }

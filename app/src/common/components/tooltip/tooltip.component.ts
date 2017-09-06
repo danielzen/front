@@ -8,10 +8,7 @@ import { Component, Input } from '@angular/core';
     '(mouseleave)': 'hidden = true'
   }
 })
-
 export class TooltipComponent {
-
   @Input() icon;
-  hidden : boolean = true;
-
+  hidden: boolean = true;
 }

@@ -1,17 +1,15 @@
 import { Component, Input } from '@angular/core';
-import { BoostConsoleFilter } from "../console.component";
+import { BoostConsoleFilter } from '../console.component';
 
-import { BoostService } from "../../boost.service";
+import { BoostService } from '../../boost.service';
 
 @Component({
   moduleId: module.id,
-  providers: [ BoostService ],
+  providers: [BoostService],
   selector: 'm-boost-console-p2p',
   templateUrl: 'p2p.component.html'
 })
 export class BoostConsoleP2PListComponent {
-  constructor(public service: BoostService) { }
-
   initialized: boolean = false;
   inProgress: boolean = false;
 
@@ -22,13 +20,16 @@ export class BoostConsoleP2PListComponent {
 
   error: string = '';
 
-  @Input('filter') set _filter(filter: BoostConsoleFilter) {
+  @Input('filter')
+  set _filter(filter: BoostConsoleFilter) {
     this.filter = filter;
 
     if (this.initialized) {
       this.load(true);
     }
   }
+
+  constructor(public service: BoostService) {}
 
   ngOnInit() {
     this.load(true);
@@ -48,9 +49,10 @@ export class BoostConsoleP2PListComponent {
       this.moreData = true;
     }
 
-    this.service.load('peer', this.filter, {
-      offset: this.offset
-    })
+    this.service
+      .load('peer', this.filter, {
+        offset: this.offset
+      })
       .then(({ boosts, loadNext }) => {
         this.inProgress = false;
 

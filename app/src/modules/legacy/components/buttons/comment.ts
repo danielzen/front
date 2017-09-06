@@ -13,16 +13,12 @@ import { Client } from '../../../../services/api';
     </a>
   `
 })
-
 export class CommentButton {
-
   object;
 
-  constructor(public client : Client) {
-  }
+  constructor(public client: Client) {}
 
-  set _object(value : any){
+  set _object(value: any) {
     this.object = value;
   }
-
 }

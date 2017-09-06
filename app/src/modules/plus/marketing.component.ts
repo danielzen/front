@@ -1,4 +1,8 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 
 import { Client } from '../../common/api/client.service';
 
@@ -7,22 +11,20 @@ import { Client } from '../../common/api/client.service';
   templateUrl: 'marketing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class PlusMarketingComponent {
-
   user = window.Minds.user;
   showSubscription: boolean = false;
   showVerify: boolean = false;
 
-  constructor(private client : Client, private cd : ChangeDetectorRef){
-  }
+  constructor(private client: Client, private cd: ChangeDetectorRef) {}
 
-  ngOnInit(){
+  ngOnInit() {
     this.load();
   }
 
   load(): Promise<any> {
-    return this.client.get('api/v1/plus')
+    return this.client
+      .get('api/v1/plus')
       .then((response: any) => {
         console.log(response);
         return response;
@@ -32,20 +34,18 @@ export class PlusMarketingComponent {
       });
   }
 
-  isPlus(){
-    if(this.user && this.user.plus)
-      return true;
+  isPlus() {
+    if (this.user && this.user.plus) return true;
     return false;
   }
 
-  openSubscription(){
+  openSubscription() {
     this.showSubscription = true;
     this.detectChanges();
   }
 
-  detectChanges(){
+  detectChanges() {
     this.cd.markForCheck();
     this.cd.detectChanges();
   }
-
 }

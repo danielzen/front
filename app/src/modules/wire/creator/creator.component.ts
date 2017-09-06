@@ -1,9 +1,16 @@
-import { Component, Input, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from "@angular/core";
-import { CurrencyPipe } from "@angular/common";
+import {
+  Component,
+  Input,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+  ChangeDetectorRef
+} from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 
-import { OverlayModalService } from "../../../services/ux/overlay-modal";
-import { Client } from "../../../services/api";
-import { Session, SessionFactory } from "../../../services/session";
+import { OverlayModalService } from '../../../services/ux/overlay-modal';
+import { Client } from '../../../services/api';
+import { Session, SessionFactory } from '../../../services/session';
 import { WireService } from '../wire.service';
 
 export type CurrencyType = 'points' | 'money' | 'btc';
@@ -13,12 +20,12 @@ export class VisibleWireError extends Error {
 }
 
 export interface WireStruc {
-  amount: number | '',
-  currency: CurrencyType | null,
-  guid: any,
-  recurring: boolean,
-  payload: any
-};
+  amount: number | '';
+  currency: CurrencyType | null;
+  guid: any;
+  recurring: boolean;
+  payload: any;
+}
 
 @Component({
   moduleId: module.id,
@@ -27,8 +34,6 @@ export interface WireStruc {
   templateUrl: 'creator.component.html'
 })
 export class WireCreatorComponent implements AfterViewInit {
-  @ViewChild('amountEditor') private _amountEditor: ElementRef;
-
   wire: WireStruc = {
     amount: 1000,
     currency: 'points',
@@ -37,7 +42,7 @@ export class WireCreatorComponent implements AfterViewInit {
 
     // Payment
     payload: null
-  }
+  };
 
   owner: any;
 
@@ -50,8 +55,8 @@ export class WireCreatorComponent implements AfterViewInit {
     cap: 5000,
     usd: 1,
     btc: 0,
-    minUsd: 1,
-  }
+    minUsd: 1
+  };
 
   editingAmount: boolean = false;
 
@@ -64,7 +69,8 @@ export class WireCreatorComponent implements AfterViewInit {
 
   session: Session = SessionFactory.build();
 
-  @Input('object') set data(object) {
+  @Input('object')
+  set data(object) {
     this.wire.guid = object ? object.guid : null;
 
     if (!this.wire.guid && object.entity_guid) {
@@ -74,7 +80,7 @@ export class WireCreatorComponent implements AfterViewInit {
     this.owner = void 0;
 
     if (object) {
-      if (object.type == 'user') {
+      if (object.type === 'user') {
         this.owner = object;
       } else if (object.ownerObj) {
         this.owner = object.ownerObj;
@@ -92,20 +98,21 @@ export class WireCreatorComponent implements AfterViewInit {
     this.setDefaults();
   }
 
+  @ViewChild('amountEditor') private _amountEditor: ElementRef;
+
   constructor(
     private wireService: WireService,
     private _changeDetectorRef: ChangeDetectorRef,
     private overlayModal: OverlayModalService,
     private client: Client,
     private currency: CurrencyPipe
-  ) { }
+  ) {}
 
   ngOnInit() {
-    this.load()
-      .then(() => {
-        this.initialized = true;
-        this.syncOwner();
-      });
+    this.load().then(() => {
+      this.initialized = true;
+      this.syncOwner();
+    });
   }
 
   ngAfterViewInit() {
@@ -121,7 +128,8 @@ export class WireCreatorComponent implements AfterViewInit {
     // TODO: Move to service and cache (maybe?)
     this.inProgress = true;
 
-    return this.client.get(`api/v1/boost/rates`)
+    return this.client
+      .get(`api/v1/boost/rates`)
       .then((rates: any) => {
         this.inProgress = false;
         this.rates = rates;
@@ -146,7 +154,8 @@ export class WireCreatorComponent implements AfterViewInit {
       return;
     }
 
-    this.client.get(`api/v1/wire/rewards/${this.owner.guid}`)
+    this.client
+      .get(`api/v1/wire/rewards/${this.owner.guid}`)
       .then(({ merchant, wire_rewards, sums }) => {
         this.owner.merchant = merchant;
         this.owner.wire_rewards = wire_rewards;
@@ -161,8 +170,14 @@ export class WireCreatorComponent implements AfterViewInit {
       this.wire.currency = this._opts.default.type;
       this.wire.amount = this._opts.default.min;
 
-      if (!this._opts.disableThresholdCheck && this.sums && this.sums[this._opts.default.type]) {
-        this.wire.amount = <number>this.wire.amount - Math.ceil(this.sums[this._opts.default.type]);
+      if (
+        !this._opts.disableThresholdCheck &&
+        this.sums &&
+        this.sums[this._opts.default.type]
+      ) {
+        this.wire.amount =
+          <number>this.wire.amount -
+          Math.ceil(this.sums[this._opts.default.type]);
       }
     } else if (this.owner.merchant) {
       this.wire.currency = 'money';
@@ -180,7 +195,7 @@ export class WireCreatorComponent implements AfterViewInit {
    * Sets the wire currency, and rounds the amount if necessary
    */
   setCurrency(currency: CurrencyType | null) {
-    if ((!this.owner || !this.owner.merchant) && (currency !== 'points')) {
+    if ((!this.owner || !this.owner.merchant) && currency !== 'points') {
       return;
     }
 
@@ -224,12 +239,12 @@ export class WireCreatorComponent implements AfterViewInit {
       return;
     }
 
-    if (typeof amount == 'number') {
+    if (typeof amount === 'number') {
       this.wire.amount = amount;
       return;
     }
 
-    amount = amount.replace(/,/g, "");
+    amount = amount.replace(/,/g, '');
     this.wire.amount = parseFloat(amount);
   }
 
@@ -251,12 +266,13 @@ export class WireCreatorComponent implements AfterViewInit {
     this.showErrors();
   }
 
-   /**
+  /**
    * Round by 2 decimals if currency is unset or not points. If not, round down to an integer.
    */
   roundAmount() {
-    if (!this.wire.currency || this.wire.currency != 'points') {
-      this.wire.amount = Math.round(parseFloat(`${this.wire.amount}`) * 100) / 100;
+    if (!this.wire.currency || this.wire.currency !== 'points') {
+      this.wire.amount =
+        Math.round(parseFloat(`${this.wire.amount}`) * 100) / 100;
     } else {
       this.wire.amount = Math.floor(<number>this.wire.amount);
     }
@@ -310,11 +326,13 @@ export class WireCreatorComponent implements AfterViewInit {
       throw new Error('You should select a currency.');
     }
 
-    if (this.wire.currency == 'points') {
+    if (this.wire.currency === 'points') {
       const charges = this.calcCharges(this.wire.currency);
 
-      if ((this.rates.balance !== null) && (charges > this.rates.balance)) {
-        throw new VisibleWireError(`You only have ${this.rates.balance} points.`);
+      if (this.rates.balance !== null && charges > this.rates.balance) {
+        throw new VisibleWireError(
+          `You only have ${this.rates.balance} points.`
+        );
       }
     } else {
       if (!this.wire.payload) {
@@ -328,9 +346,15 @@ export class WireCreatorComponent implements AfterViewInit {
 
     // TODO: Maybe fetch wire's owner to check merchant status
 
-    if (this.wire.currency == 'money') {
+    if (this.wire.currency === 'money') {
       if (this.calcCharges(this.wire.currency) < this.rates.minUsd) {
-        throw new VisibleWireError(`You must spend at least ${this.currency.transform(this.rates.minUsd, 'USD', true)} USD`);
+        throw new VisibleWireError(
+          `You must spend at least ${this.currency.transform(
+            this.rates.minUsd,
+            'USD',
+            true
+          )} USD`
+        );
       }
     }
   }

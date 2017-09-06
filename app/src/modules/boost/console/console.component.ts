@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute } from '@angular/router';
 
-import { Session, SessionFactory } from "../../../services/session";
+import { Session, SessionFactory } from '../../../services/session';
 
 export type BoostConsoleType = 'newsfeed' | 'content' | 'peer';
 export type BoostConsoleFilter = 'inbox' | 'outbox';
@@ -18,10 +18,7 @@ export class BoostConsoleComponent {
 
   session: Session = SessionFactory.build();
 
-  constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) { }
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     if (!this.activatedRoute.snapshot.params['type']) {

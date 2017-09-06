@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 
-import { OverlayModalService } from "../../../services/ux/overlay-modal";
-import { SignupModalService } from "../../modals/signup/service";
-import { WireCreatorComponent } from "../creator/creator.component";
-import { Session, SessionFactory } from "../../../services/session";
+import { OverlayModalService } from '../../../services/ux/overlay-modal';
+import { SignupModalService } from '../../modals/signup/service';
+import { WireCreatorComponent } from '../creator/creator.component';
+import { Session, SessionFactory } from '../../../services/session';
 
 @Component({
   selector: 'm-wire-button',
@@ -18,7 +18,10 @@ export class WireButtonComponent {
 
   session: Session = SessionFactory.build();
 
-  constructor(private overlayModal: OverlayModalService, private modal: SignupModalService) { }
+  constructor(
+    private overlayModal: OverlayModalService,
+    private modal: SignupModalService
+  ) {}
 
   wire() {
     if (!this.session.isLoggedIn()) {
@@ -27,12 +30,16 @@ export class WireButtonComponent {
       return;
     }
 
-    const creator = this.overlayModal.create(WireCreatorComponent, this.object, {
-      default: this.object && this.object.wire_threshold,
-      onComplete: (wire) => {
-        this.object.wire_totals[wire.currency] = wire.amount;
+    const creator = this.overlayModal.create(
+      WireCreatorComponent,
+      this.object,
+      {
+        default: this.object && this.object.wire_threshold,
+        onComplete: wire => {
+          this.object.wire_totals[wire.currency] = wire.amount;
+        }
       }
-    });
+    );
     creator.present();
   }
 }

@@ -1,18 +1,20 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input
+} from '@angular/core';
 import { Client } from '../../../services/api';
 import { Session } from '../../../services/session';
-
 
 @Component({
   selector: 'm-wire-console',
   templateUrl: 'console.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class WireConsoleComponent {
-
   ready: boolean = true;
-  stats: { sum, count, avg } = {
+  stats: { sum; count; avg } = {
     sum: 0,
     count: 0,
     avg: 0
@@ -22,7 +24,11 @@ export class WireConsoleComponent {
 
   startDate: string;
 
-  constructor(private client: Client, private session: Session, private cd: ChangeDetectorRef) {
+  constructor(
+    private client: Client,
+    private session: Session,
+    private cd: ChangeDetectorRef
+  ) {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
     this.startDate = d.toISOString();
@@ -33,7 +39,13 @@ export class WireConsoleComponent {
   }
 
   getStats() {
-    this.client.get('api/v1/wire/sums/receiver/' + this.session.getLoggedInUser().guid + '/money', { advanced: true, start: Date.parse(this.startDate) / 1000 })
+    this.client
+      .get(
+        'api/v1/wire/sums/receiver/' +
+          this.session.getLoggedInUser().guid +
+          '/money',
+        { advanced: true, start: Date.parse(this.startDate) / 1000 }
+      )
       .then(({ sum, count, avg }) => {
         this.stats = {
           sum: sum,
@@ -54,5 +66,4 @@ export class WireConsoleComponent {
     this.cd.markForCheck();
     this.cd.detectChanges();
   }
-
 }

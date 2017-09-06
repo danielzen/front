@@ -5,7 +5,7 @@ import { Emoji as EmojiDirective } from '../../common/directives/emoji';
 
 @Component({
   selector: 'minds-emoji',
-  inputs: [ 'localDirective' ],
+  inputs: ['localDirective'],
   template: `
     <div class="m-bubble-popup mdl-shadow--4dp"
     *ngIf="localDirective.shown"
@@ -32,10 +32,8 @@ import { Emoji as EmojiDirective } from '../../common/directives/emoji';
   `
 })
 export class MindsEmoji {
-  private emojis = EmojiList;
   localDirective: EmojiDirective;
-
-  constructor() {}
+  private emojis = EmojiList;
 
   hide() {
     if (!this.localDirective.shown) {
@@ -66,13 +64,20 @@ export class MindsEmoji {
       return (<any>String).fromCodePoint.apply(String, args);
     }
 
-    var chars = [], point, offset, units, i;
+    var chars = [],
+      point,
+      offset,
+      units,
+      i;
     for (i = 0; i < args.length; ++i) {
       point = args[i];
       offset = point - 0x10000;
-      units = point > 0xFFFF ? [0xD800 + (offset >> 10), 0xDC00 + (offset & 0x3FF)] : [point];
+      units =
+        point > 0xffff
+          ? [0xd800 + (offset >> 10), 0xdc00 + (offset & 0x3ff)]
+          : [point];
       chars.push(String.fromCharCode.apply(null, units));
     }
-    return chars.join("");
+    return chars.join('');
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
 
@@ -13,21 +13,23 @@ import { AttachmentService } from '../../../services/attachment';
   selector: 'minds-archive-view',
   templateUrl: 'view.html'
 })
-
 export class ArchiveView {
-
   minds;
-  guid : string;
-  entity : any = {};
+  guid: string;
+  entity: any = {};
   session = SessionFactory.build();
-  inProgress : boolean = true;
-  error : string = "";
+  inProgress: boolean = true;
+  error: string = '';
   deleteToggle: boolean = false;
-
-  constructor(public client: Client,public router: Router, public route: ActivatedRoute, public attachment: AttachmentService){
-  }
-
   paramsSubscription: Subscription;
+
+  constructor(
+    public client: Client,
+    public router: Router,
+    public route: ActivatedRoute,
+    public attachment: AttachmentService
+  ) {}
+
   ngOnInit() {
     this.minds = window.Minds;
 
@@ -43,31 +45,29 @@ export class ArchiveView {
     this.paramsSubscription.unsubscribe();
   }
 
-  load(refresh : boolean = false){
+  load(refresh: boolean = false) {
     this.inProgress = true;
-    this.client.get('api/v1/archive/' + this.guid, { children: false })
-      .then((response : any) => {
+    this.client
+      .get('api/v1/archive/' + this.guid, { children: false })
+      .then((response: any) => {
         this.inProgress = false;
-        if(response.entity.type != 'object'){
+        if (response.entity.type !== 'object') {
           return;
         }
-        if(response.entity)
-          this.entity = response.entity;
-
+        if (response.entity) this.entity = response.entity;
       })
-      .catch((e) => {
-          this.inProgress = false;
-          this.error = "Sorry, there was problem."
+      .catch(e => {
+        this.inProgress = false;
+        this.error = 'Sorry, there was problem.';
       });
   }
 
-  delete(){
-    this.client.delete('api/v1/archive/' + this.guid)
-      .then((response : any) => {
+  delete() {
+    this.client
+      .delete('api/v1/archive/' + this.guid)
+      .then((response: any) => {
         this.router.navigate(['/discovery/owner']);
       })
-      .catch((e) => {
-      });
+      .catch();
   }
-
 }

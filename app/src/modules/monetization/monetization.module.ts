@@ -22,11 +22,12 @@ import { AdSharingAnalyticsComponent } from './ad-sharing/analytics/analytics.co
 import { AdSharingSettingsComponent } from './ad-sharing/settings/settings.component';
 import { WalletWireComponent } from '../wallet/wire/wire.component';
 
-
-const monetizationRoutes : Routes = [
-  { path: 'affiliates',  component: AffiliateMarketingComponent },
+const monetizationRoutes: Routes = [
+  { path: 'affiliates', component: AffiliateMarketingComponent },
   { path: 'monetization', component: MonetizationMarketingComponent },
-  { path: 'wallet/revenue', component: RevenueConsoleComponent,
+  {
+    path: 'wallet/revenue',
+    component: RevenueConsoleComponent,
     children: [
       { path: '', redirectTo: 'earnings', pathMatch: 'full' },
       { path: 'points', component: WalletTransactionsComponent },
@@ -40,7 +41,7 @@ const monetizationRoutes : Routes = [
       { path: 'wire', component: WalletWireComponent }
     ]
   }
-]
+];
 
 @NgModule({
   imports: [
@@ -87,5 +88,4 @@ const monetizationRoutes : Routes = [
     AdSharingComponent
   ]
 })
-
 export class MonetizationModule {}

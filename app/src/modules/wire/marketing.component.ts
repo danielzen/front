@@ -1,4 +1,8 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 
 import { Client } from '../../common/api/client.service';
 
@@ -7,22 +11,15 @@ import { Client } from '../../common/api/client.service';
   templateUrl: 'marketing.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class WireMarketingComponent {
-
   user = window.Minds.user;
   showSubscription: boolean = false;
   showVerify: boolean = false;
 
-  constructor(private client : Client, private cd : ChangeDetectorRef){
-  }
+  constructor(private client: Client, private cd: ChangeDetectorRef) {}
 
-  ngOnInit(){
-  }
-
-  detectChanges(){
+  detectChanges() {
     this.cd.markForCheck();
     this.cd.detectChanges();
   }
-
 }

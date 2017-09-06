@@ -1,8 +1,2 @@
-
-export class VideoAdsService{
-
-    constructor(){
-    
-    }
-
+export class VideoAdsService {
 }

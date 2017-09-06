@@ -1,6 +1,10 @@
 export class CacheService {
   private storage = {};
 
+  static _() {
+    return new CacheService();
+  }
+
   public set(key: string, value: any) {
     this.storage[key] = value;
     return this;
@@ -14,7 +18,4 @@ export class CacheService {
     return this.storage[key];
   }
 
-  static _() {
-    return new CacheService();
-  }
 }

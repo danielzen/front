@@ -1,19 +1,14 @@
-import { Component, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, EventEmitter, Output } from '@angular/core';
 
 import { Client, Upload } from '../../../../services/api';
 import { SessionFactory } from '../../../../services/session';
-import { WalletService } from '../../../../services/wallet';
-import { Storage } from '../../../../services/storage';
 
 @Component({
   moduleId: module.id,
   selector: 'm-wire-console-settings',
   templateUrl: 'settings.component.html'
 })
-
 export class WireConsoleSettingsComponent {
-
   @Output('saved') savedEmitter: EventEmitter<any> = new EventEmitter<any>();
 
   session = SessionFactory.build();
@@ -22,7 +17,7 @@ export class WireConsoleSettingsComponent {
   user = window.Minds.user;
   minds = window.Minds;
 
-  error: string = "";
+  error: string = '';
 
   exclusive: any = {
     intro: '',
@@ -34,7 +29,9 @@ export class WireConsoleSettingsComponent {
   previewEntity: any = false;
   preview: any = {};
 
-  constructor(public client: Client, public upload: Upload, private cd: ChangeDetectorRef) { }
+  constructor(public client: Client,
+              public upload: Upload,
+              private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.setUp();
@@ -78,24 +75,23 @@ export class WireConsoleSettingsComponent {
     reader.onloadend = () => {
       input.src = reader.result;
 
-      this.preview = { src: reader.result };
+      this.preview = {src: reader.result};
       this.updatePreviewEntity();
-    }
+    };
     reader.readAsDataURL(file);
 
     this.detectChanges();
   }
 
   uploadPreview(input: HTMLInputElement): Promise<boolean> {
-
     let file = input ? input.files[0] : null;
 
     if (!file) {
       return Promise.resolve(true);
     }
 
-    return this.upload.post('api/v1/merchant/exclusive-preview', [file], {},
-      (progress) => {
+    return this.upload
+      .post('api/v1/merchant/exclusive-preview', [file], {}, progress => {
         console.log(progress);
       })
       .then((response: any) => {
@@ -105,7 +101,7 @@ export class WireConsoleSettingsComponent {
 
         return true;
       })
-      .catch((e) => {
+      .catch(e => {
         alert('Sorry, there was a problem. Try again.');
         input.value = null;
         this.detectChanges();
@@ -123,18 +119,18 @@ export class WireConsoleSettingsComponent {
     this.exclusive.saving = true;
     this.detectChanges();
 
-    return this.uploadPreview(file)
-      .then(() => {
-        return this.client.post('api/v1/merchant/exclusive', this.exclusive)
-          .then(() => {
-            this.minds.user.merchant.exclusive = this.exclusive;
-            this.exclusive.saved = true;
-            this.exclusive.saving = false;
-            this.detectChanges();
+    return this.uploadPreview(file).then(() => {
+      return this.client
+        .post('api/v1/merchant/exclusive', this.exclusive)
+        .then(() => {
+          this.minds.user.merchant.exclusive = this.exclusive;
+          this.exclusive.saved = true;
+          this.exclusive.saving = false;
+          this.detectChanges();
 
-            setTimeout(() => this.savedEmitter.emit(true), 2500);
-          });
-      });
+          setTimeout(() => this.savedEmitter.emit(true), 2500);
+        });
+    });
   }
 
   detectChanges() {

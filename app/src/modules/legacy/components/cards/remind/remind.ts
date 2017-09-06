@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, EventEmitter } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  EventEmitter
+} from '@angular/core';
 
 import { Client } from '../../../../../services/api';
 import { SessionFactory } from '../../../../../services/session';
@@ -9,17 +14,15 @@ import { AttachmentService } from '../../../../../services/attachment';
   selector: 'minds-remind',
   inputs: ['object', '_events: events'],
   templateUrl: '../activity/activity.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class Remind {
-
   minds = window.Minds;
 
-  activity : any;
-  hideTabs : boolean;
+  activity: any;
+  hideTabs: boolean;
   session = SessionFactory.build();
-  
+
   events: EventEmitter<any>;
   eventsSubscription: any;
 
@@ -27,7 +30,7 @@ export class Remind {
   commentsToggle: boolean = false;
   showBoostOptions: boolean = false;
   translateToggle: any;
-  translateEvent: EventEmitter<any> = new EventEmitter(); 
+  translateEvent: EventEmitter<any> = new EventEmitter();
 
   constructor(
     public client: Client,
@@ -36,7 +39,7 @@ export class Remind {
   ) {
     this.hideTabs = true;
   }
-  
+
   set _events(value: any) {
     if (this.eventsSubscription) {
       this.eventsSubscription.unsubscribe();
@@ -65,13 +68,15 @@ export class Remind {
     }
   }
 
-  toDate(timestamp){
-    return new Date(timestamp*1000);
+  toDate(timestamp) {
+    return new Date(timestamp * 1000);
   }
 
   translate($event: any) {
     this.translateEvent.emit($event);
   }
 
-  propagateTranslation(e?) { }
+  propagateTranslation(e?) {
+    //
+  }
 }

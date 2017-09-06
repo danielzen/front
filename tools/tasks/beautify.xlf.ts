@@ -3,7 +3,7 @@ import { argv } from 'yargs';
 import { statSync, readFileSync, writeFileSync } from 'fs';
 import { APP_SRC } from '../config';
 
-let XML = require('pixl-xml')
+let XML = require('pixl-xml');
 
 export = (gulp, plugins) => done => {
   if (!argv.source) {
@@ -16,9 +16,9 @@ export = (gulp, plugins) => done => {
   let fileContent = readFileSync(file).toString();
 
   fileContent = fileContent
-    .replace(/\&#10;/g, "\n")
-    .replace(/\&#13;/g, "\n")
-    .replace(/<x\s+(.*?)\s*\/>/g, "[_x_start_] $1 [_x_end_]");
+    .replace(/\&#10;/g, '\n')
+    .replace(/\&#13;/g, '\n')
+    .replace(/<x\s+(.*?)\s*\/>/g, '[_x_start_] $1 [_x_end_]');
 
   let xmlContent = XML.parse(fileContent, {
     preserveAttributes: true,
@@ -36,7 +36,7 @@ export = (gulp, plugins) => done => {
     return a._Attribs.id > b._Attribs.id ? 1 : -1;
   });
 
-  let result = XML.stringify(xmlContent, void 0, 0, "  ", "\n");
+  let result = XML.stringify(xmlContent, void 0, 0, '  ', '\n');
 
   result = result
     .replace(/\[_x_start_\]/g, '<x')

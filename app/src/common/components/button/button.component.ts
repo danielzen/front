@@ -1,8 +1,17 @@
-import { Component, ViewChild, Input, ComponentFactoryResolver, AfterViewInit, Type, ChangeDetectorRef, ComponentRef, ElementRef } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ComponentFactoryResolver,
+  ComponentRef,
+  ElementRef,
+  Input,
+  Type,
+  ViewChild
+} from '@angular/core';
 
-import { DynamicHostDirective } from "../../directives/dynamic-host.directive";
+import { DynamicHostDirective } from '../../directives/dynamic-host.directive';
 
-import { BoostButton } from "../../../modules/legacy/components/buttons/boost";
+import { BoostButton } from '../../../modules/legacy/components/buttons/boost';
 
 @Component({
   selector: 'minds-button',
@@ -24,17 +33,16 @@ export class MindsButton implements AfterViewInit {
 
   private initialized: boolean = false;
 
-  constructor(
-    private _componentFactoryResolver: ComponentFactoryResolver
-  ) { }
+  constructor(private _componentFactoryResolver: ComponentFactoryResolver) {}
 
-  @Input('object') set _object(value: any) {
+  @Input('object')
+  set _object(value: any) {
     const oldType = this.type;
 
     this.object = value ? value : {};
 
     if (this.initialized) {
-      if (!this.componentInstance || this.type != oldType) {
+      if (!this.componentInstance || this.type !== oldType) {
         setTimeout(() => this.loadComponent(), 0);
       } else {
         this.updateData();
@@ -42,14 +50,15 @@ export class MindsButton implements AfterViewInit {
     }
   }
 
-  @Input('hostClass') set _hostClass(value: string) {
+  @Input('hostClass')
+  set _hostClass(value: string) {
     this.cssClasses = value || '';
 
     if (this.initialized) {
       this.updateClasses();
     }
   }
-  
+
   ngAfterViewInit() {
     this.loadComponent();
     this.initialized = true;
@@ -74,7 +83,9 @@ export class MindsButton implements AfterViewInit {
       return;
     }
 
-    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(componentClass),
+    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(
+        componentClass
+      ),
       viewContainerRef = this.cardHost.viewContainerRef;
 
     viewContainerRef.clear();

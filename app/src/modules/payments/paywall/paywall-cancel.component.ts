@@ -13,8 +13,7 @@ export class PaywallCancelButton {
 
   inProgress: boolean = false;
 
-  constructor(private client: Client) {
-  }
+  constructor(private client: Client) {}
 
   action() {
     if (this.inProgress || !this.target) {
@@ -23,7 +22,8 @@ export class PaywallCancelButton {
 
     this.inProgress = true;
 
-    this.client.delete(`api/v1/payments/plans/exclusive/${this.target}`)
+    this.client
+      .delete(`api/v1/payments/plans/exclusive/${this.target}`)
       .then((response: any) => {
         this.inProgress = false;
         this.completed.emit();

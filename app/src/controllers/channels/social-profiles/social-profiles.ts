@@ -3,12 +3,12 @@ import { Component, EventEmitter } from '@angular/core';
 import { KeyVal } from '../../../interfaces/entities';
 
 export interface SocialProfileMeta {
-    key: string,
-    label: string,
-    placeholder: string,
-    link: string,
-    icon: string,
-    customIcon?: boolean,
+  key: string;
+  label: string;
+  placeholder: string;
+  link: string;
+  icon: string;
+  customIcon?: boolean;
 }
 
 @Component({
@@ -18,7 +18,6 @@ export interface SocialProfileMeta {
   outputs: ['changed'],
   templateUrl: 'social-profiles.html'
 })
-
 export class ChannelSocialProfiles {
   socialProfiles: KeyVal[];
   editing: boolean = false;
@@ -66,7 +65,7 @@ export class ChannelSocialProfiles {
       placeholder: 'Username',
       link: 'https://www.minds.com/:value',
       icon: 'minds',
-      customIcon: true,
+      customIcon: true
     },
     {
       key: 'reddit',
@@ -133,11 +132,63 @@ export class ChannelSocialProfiles {
     }
   ];
 
+  set _user(value: any) {
+    this.socialProfiles = value.social_profiles || [];
+  }
+
+  propagateChanges() {
+    this.changed.emit(this.socialProfiles);
+  }
+
+  newEmptySocialProfile() {
+    this.socialProfiles.push({
+      key: '',
+      value: ''
+    });
+
+    this.propagateChanges();
+  }
+
+  removeSocialProfile(index: number) {
+    this.socialProfiles.splice(index, 1);
+
+    this.propagateChanges();
+  }
+
+  getSocialProfileLabel({key = ''}) {
+    return this.getSocialProfileMeta(key).label;
+  }
+
+  getSocialProfilePlaceholder({key = ''}) {
+    return this.getSocialProfileMeta(key).placeholder;
+  }
+
+  getSocialProfileIconClass({key = ''}) {
+    let meta = this.getSocialProfileMeta(key),
+      domClass;
+
+    if (meta.customIcon) {
+      domClass = `m-custom-icon m-custom-icon-${meta.icon}`;
+    } else {
+      domClass = `fa fa-fw fa-${meta.icon}`;
+    }
+
+    return domClass;
+  }
+
+  buildSocialProfileLink({key = '', value = ''}) {
+    let link = this.getSocialProfileMeta(key).link;
+
+    return link.replace(':value', value);
+  }
+
   private getSocialProfileMeta(key: string): SocialProfileMeta {
     let defaultMeta: SocialProfileMeta = {
-      key: '', label: '',
+      key: '',
+      label: '',
       placeholder: '',
-      link: '#', icon: 'question'
+      link: '#',
+      icon: 'question'
     };
 
     if (!key) {
@@ -153,53 +204,4 @@ export class ChannelSocialProfiles {
     return defaultMeta;
   }
 
-  set _user(value: any) {
-    this.socialProfiles = value.social_profiles || [];
-  }
-
-  propagateChanges() {
-    this.changed.emit(this.socialProfiles);
-  }
-
-  newEmptySocialProfile() {
-    this.socialProfiles.push({
-      key: '',
-      value: '',
-    });
-
-    this.propagateChanges();
-  }
-
-  removeSocialProfile(index: number) {
-    this.socialProfiles.splice(index, 1);
-
-    this.propagateChanges();
-  }
-
-  getSocialProfileLabel({ key = '' }) {
-    return this.getSocialProfileMeta(key).label;
-  }
-
-  getSocialProfilePlaceholder({ key = '' }) {
-    return this.getSocialProfileMeta(key).placeholder;
-  }
-
-  getSocialProfileIconClass({ key = '' }) {
-    let meta = this.getSocialProfileMeta(key),
-      domClass;
-
-    if (meta.customIcon) {
-      domClass = `m-custom-icon m-custom-icon-${meta.icon}`;
-    } else {
-      domClass = `fa fa-fw fa-${meta.icon}`;
-    }
-
-    return domClass;
-  }
-
-  buildSocialProfileLink({ key = '', value = '' }) {
-    let link = this.getSocialProfileMeta(key).link;
-
-    return link.replace(':value', value);
-  }
 }

@@ -1,17 +1,15 @@
 import { Component, Input } from '@angular/core';
-import { BoostConsoleType } from "../console.component";
+import { BoostConsoleType } from '../console.component';
 
-import { BoostService } from "../../boost.service";
+import { BoostService } from '../../boost.service';
 
 @Component({
   moduleId: module.id,
-  providers: [ BoostService ],
+  providers: [BoostService],
   selector: 'm-boost-console-network',
   templateUrl: 'network.component.html'
 })
 export class BoostConsoleNetworkListComponent {
-  constructor(public service: BoostService) { }
-
   initialized: boolean = false;
   inProgress: boolean = false;
 
@@ -22,13 +20,16 @@ export class BoostConsoleNetworkListComponent {
 
   error: string = '';
 
-  @Input('type') set _type(type: BoostConsoleType) {
+  @Input('type')
+  set _type(type: BoostConsoleType) {
     this.type = type;
 
     if (this.initialized) {
       this.load(true);
     }
   }
+
+  constructor(public service: BoostService) {}
 
   ngOnInit() {
     this.load(true);
@@ -48,10 +49,11 @@ export class BoostConsoleNetworkListComponent {
       this.moreData = true;
     }
 
-    this.service.load(this.type, '', {
-      offset: this.offset
-    })
-      .then(({ boosts, loadNext }) => {
+    this.service
+      .load(this.type, '', {
+        offset: this.offset
+      })
+      .then(({boosts, loadNext}) => {
         this.inProgress = false;
 
         if (!boosts.length) {

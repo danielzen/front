@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
@@ -11,29 +10,28 @@ import { Client, Upload } from '../../../services/api';
   selector: 'minds-admin-pages',
   templateUrl: 'pages.html'
 })
-
 export class AdminPages {
-
-  pages : Array<any> = [];
-  page : any = {
-      title : 'New Page',
-      body: '',
-      path: '',
-      menuContainer: 'footer',
-      header: false,
-      headerTop: 0,
-      subtype: 'page'
+  pages: Array<any> = [];
+  page: any = {
+    title: 'New Page',
+    body: '',
+    path: '',
+    menuContainer: 'footer',
+    header: false,
+    headerTop: 0,
+    subtype: 'page'
   };
-  path : string = "";
-  status : string = "saved";
-  headerFile : File;
-
-  constructor(public client: Client, public upload : Upload, private route: ActivatedRoute){
-  }
-
+  path: string = '';
+  status: string = 'saved';
+  headerFile: File;
   paramsSubscription: Subscription;
+
+  constructor(public client: Client,
+              public upload: Upload,
+              private route: ActivatedRoute) {}
+
   ngOnInit() {
-    this.paramsSubscription = this.route.params.subscribe((params) => {
+    this.paramsSubscription = this.route.params.subscribe(params => {
       this.path = params['path'];
       this.load();
     });
@@ -43,23 +41,23 @@ export class AdminPages {
     this.paramsSubscription.unsubscribe();
   }
 
-  load(){
-    this.client.get('api/v1/admin/pages')
-      .then((response : any) => {
-        this.pages = response.pages;
-      });
+  load() {
+    this.client.get('api/v1/admin/pages').then((response: any) => {
+      this.pages = response.pages;
+    });
   }
 
-  save(page, allowHeaderUpload = true){
+  save(page, allowHeaderUpload = true) {
     this.status = 'saving';
-    this.client.post('api/v1/admin/pages', {
+    this.client
+      .post('api/v1/admin/pages', {
         title: page.title,
         body: page.body,
         path: page.path,
         menuContainer: page.menuContainer,
         subtype: page.subtype
       })
-      .then((response : any) => {
+      .then((response: any) => {
         if (allowHeaderUpload) {
           this.uploadHeader(page);
         }
@@ -67,8 +65,12 @@ export class AdminPages {
       });
   }
 
-  delete(page){
-    if (!confirm(`Are you sure you want to delete ${page.path}? This action cannot be undone.`)) {
+  delete(page) {
+    if (
+      !confirm(
+        `Are you sure you want to delete ${page.path}? This action cannot be undone.`
+      )
+    ) {
       return;
     }
 
@@ -79,55 +81,58 @@ export class AdminPages {
     }
     this.client.delete(`api/v1/admin/pages/?path=${page.path}`);
     let i: any;
-    for(i in this.pages){
-      if(page.path == this.pages[i].path) {
+    for (i in this.pages) {
+      if (page.path === this.pages[i].path) {
         this.pages.splice(i, 1);
         break;
       }
     }
   }
 
-  setPage(page){
-      this.page = page;
+  setPage(page) {
+    this.page = page;
   }
 
-  setHeader(banner : any){
+  setHeader(banner: any) {
     this.headerFile = banner.file;
     this.page.header = true;
     this.page.headerTop = banner.top;
   }
 
-  uploadHeader(page){
-    this.upload.post('api/v1/admin/pages/' + page.path + '/header', [this.headerFile], {
-      headerTop: page.headerTop,
-      path: page.path
-    });
+  uploadHeader(page) {
+    this.upload.post(
+      'api/v1/admin/pages/' + page.path + '/header',
+      [this.headerFile],
+      {
+        headerTop: page.headerTop,
+        path: page.path
+      }
+    );
   }
 
-  newPage(){
+  newPage() {
     this.page = {
-        title: 'New Page',
-        body: '',
-        path: 'new',
-        menuContainer: 'footer',
-        header: false,
-        headerTop: 0,
-        subtype: 'page'
-    }
+      title: 'New Page',
+      body: '',
+      path: 'new',
+      menuContainer: 'footer',
+      header: false,
+      headerTop: 0,
+      subtype: 'page'
+    };
     this.pages.push(this.page);
   }
 
-  newLink(){
+  newLink() {
     this.page = {
-        title: 'New Link',
-        body: '',
-        path: 'http://',
-        menuContainer: 'footer',
-        header: false,
-        headerTop: 0,
-        subtype: 'link'
-    }
+      title: 'New Link',
+      body: '',
+      path: 'http://',
+      menuContainer: 'footer',
+      header: false,
+      headerTop: 0,
+      subtype: 'link'
+    };
     this.pages.push(this.page);
   }
-
 }

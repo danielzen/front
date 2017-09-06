@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { Subscription } from 'rxjs/Rx';
 
-import { Client, Upload } from '../../../services/api';
+import { Client } from '../../../services/api';
 
 @Component({
   moduleId: module.id,
@@ -14,27 +13,24 @@ import { Client, Upload } from '../../../services/api';
   },
   templateUrl: 'boosts.html'
 })
-
 export class AdminBoosts {
+  boosts: Array<any> = [];
+  type: string = 'newsfeed';
+  count: number = 0;
+  newsfeed_count: number = 0;
+  content_count: number = 0;
 
-  boosts : Array<any> = [];
-  type : string = "newsfeed";
-  count : number = 0;
-  newsfeed_count : number = 0;
-  content_count : number = 0;
-  
-  inProgress : boolean = false;
-  moreData : boolean = true;
-  offset : string = "";
+  inProgress: boolean = false;
+  moreData: boolean = true;
+  offset: string = '';
 
   statistics: any = null;
-
-  constructor(public client: Client, private route: ActivatedRoute){
-  }
-
   paramsSubscription: Subscription;
+
+  constructor(public client: Client, private route: ActivatedRoute) {}
+
   ngOnInit() {
-    this.paramsSubscription = this.route.params.subscribe((params) => {
+    this.paramsSubscription = this.route.params.subscribe(params => {
       if (params['type']) {
         this.type = params['type'];
       } else {
@@ -45,12 +41,11 @@ export class AdminBoosts {
       this.count = 0;
       this.inProgress = false;
       this.moreData = true;
-      this.offset = "";
+      this.offset = '';
 
-      this.load()
-        .then(() => {
-          this.loadStatistics();
-        });
+      this.load().then(() => {
+        this.loadStatistics();
+      });
     });
 
     this.domHack();
@@ -61,14 +56,17 @@ export class AdminBoosts {
     this.undoDomHack();
   }
 
-  load(){
-    if(this.inProgress)
-      return;
+  load() {
+    if (this.inProgress) return;
     this.inProgress = true;
 
-    return this.client.get('api/v1/admin/boosts/' + this.type, { limit: 24, offset: this.offset })
-      .then((response : any) => {
-        if(!response.boosts){
+    return this.client
+      .get('api/v1/admin/boosts/' + this.type, {
+        limit: 24,
+        offset: this.offset
+      })
+      .then((response: any) => {
+        if (!response.boosts) {
           this.inProgress = false;
           this.moreData = false;
           return;
@@ -82,7 +80,7 @@ export class AdminBoosts {
         this.offset = response['load-next'];
         this.inProgress = false;
       })
-      .catch((e) => {
+      .catch(e => {
         this.inProgress = false;
       });
   }
@@ -90,8 +88,9 @@ export class AdminBoosts {
   loadStatistics() {
     this.statistics = null;
 
-    return this.client.get(`api/v1/admin/boosts/analytics/${this.type}`)
-      .then((response) => {
+    return this.client
+      .get(`api/v1/admin/boosts/analytics/${this.type}`)
+      .then(response => {
         this.statistics = response;
       })
       .catch(e => {
@@ -99,36 +98,30 @@ export class AdminBoosts {
       });
   }
 
-  domHack(){
+  domHack() {
     var self = this;
     document.addEventListener('keydown', self.onKeypress);
   }
 
-  accept(boost : any = null){
-    if(!boost)
-      boost = this.boosts[0];
+  accept(boost: any = null) {
+    if (!boost) boost = this.boosts[0];
 
-    this.client.post('api/v1/admin/boosts/' + this.type + '/' + boost.guid  + '/accept', { rating : boost.rating })
-      .then((response : any) => {
-
+    this.client
+      .post('api/v1/admin/boosts/' + this.type + '/' + boost.guid + '/accept', {
+        rating: boost.rating
       })
-      .catch((e) => {
-
-      });
+      .then((response: any) => null)
+      .catch(e => null);
     this.pop(boost);
   }
 
-  reject(boost : any = null){
-    if(!boost)
-      boost = this.boosts[0];
+  reject(boost: any = null) {
+    if (!boost) boost = this.boosts[0];
 
-    this.client.post('api/v1/admin/boosts/' + this.type + '/' + boost.guid  + '/reject')
-      .then((response : any) => {
-
-      })
-      .catch((e) => {
-
-      });
+    this.client
+      .post('api/v1/admin/boosts/' + this.type + '/' + boost.guid + '/reject')
+      .then((response: any) => null)
+      .catch(e => null);
     this.pop(boost);
   }
 
@@ -137,42 +130,36 @@ export class AdminBoosts {
    */
   pop(boost) {
     let i: any;
-    for(i in this.boosts){
-      if(boost == this.boosts[i])
-        this.boosts.splice(i,1);
+    for (i in this.boosts) {
+      if (boost === this.boosts[i]) this.boosts.splice(i, 1);
     }
-    if(this.type == "newsfeed")
-      this.newsfeed_count--;
-    else if(this.type == "content")
-      this.content_count--;
-    if(this.boosts.length < 5)
-      this.load();
+    if (this.type === 'newsfeed') this.newsfeed_count--;
+    else if (this.type === 'content') this.content_count--;
+    if (this.boosts.length < 5) this.load();
   }
 
-  onKeyDown(e){
+  onKeyDown(e) {
     //e.preventDefault();
-    e.stopPropagation()
-    if(e.keyCode == 37)
-      return this.accept();
-    if(e.keyCode == 39)
-      return this.reject();
+    e.stopPropagation();
+    if (e.keyCode === 37) return this.accept();
+    if (e.keyCode === 39) return this.reject();
   }
 
   /**
    * Hack to make host keypress listen
    */
-  onKeypress(e){
+  onKeypress(e) {
     var event = new KeyboardEvent('keydown', e);
     document.getElementsByTagName('minds-admin-boosts')[0].dispatchEvent(event);
   }
 
-  undoDomHack(){
+  undoDomHack() {
     document.removeEventListener('keydown', this.onKeypress);
   }
 
   // TODO: Please, convert this to a pipe (and maybe add days support)!
   _duration(duration: number): string {
-    const minsDuration = Math.floor(duration / (60000)),
+    const minsDuration = Math.floor(duration / 60000),
       mins = minsDuration % 60,
       hours = Math.floor(minsDuration / 60);
 
@@ -180,17 +167,16 @@ export class AdminBoosts {
   }
 
   private _padStart(str: string, targetLength, padString) {
-    targetLength = targetLength>>0; //floor if number or convert non-number to 0;
+    targetLength = targetLength >> 0; //floor if number or convert non-number to 0;
     padString = String(padString || ' ');
     if (str.length > targetLength) {
       return String(str);
-    }
-    else {
-      targetLength = targetLength-str.length;
+    } else {
+      targetLength = targetLength - str.length;
       if (targetLength > padString.length) {
-        padString += padString.repeat(targetLength/padString.length); //append to original to ensure we are longer than needed
+        padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
       }
-      return padString.slice(0,targetLength) + String(str);
+      return padString.slice(0, targetLength) + String(str);
     }
   }
 }

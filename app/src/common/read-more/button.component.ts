@@ -9,18 +9,13 @@ import { ReadMoreDirective } from './read-more.directive';
     </div>
   `
 })
-
 export class ReadMoreButtonComponent {
-
   content: ReadMoreDirective;
 
-  constructor(private cd: ChangeDetectorRef) {
-
-  }
+  constructor(private cd: ChangeDetectorRef) {}
 
   detectChanges() {
     this.cd.markForCheck();
     this.cd.detectChanges();
   }
-
 }

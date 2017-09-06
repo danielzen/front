@@ -8,23 +8,21 @@ import { AttachmentService } from '../../../../../../services/attachment';
   moduleId: module.id,
   selector: 'minds-card-video',
   host: {
-    'class': 'mdl-card mdl-shadow--2dp'
+    class: 'mdl-card mdl-shadow--2dp'
   },
   inputs: ['object'],
-  templateUrl: 'video.html',
+  templateUrl: 'video.html'
 })
-
 export class VideoCard {
-  entity : any;
+  entity: any;
   session = SessionFactory.build();
   minds: {};
 
-	constructor(public client: Client, public attachment: AttachmentService){
+  constructor(public client: Client, public attachment: AttachmentService) {
     this.minds = window.Minds;
-	}
+  }
 
   set object(value: any) {
     this.entity = value;
   }
-
 }

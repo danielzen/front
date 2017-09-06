@@ -7,16 +7,15 @@ import { Client } from '../../../../services/api';
 @Component({
   moduleId: module.id,
   templateUrl: 'analytics.component.html',
-  selector: 'm-wallet-ad-sharing-analytics',
+  selector: 'm-wallet-ad-sharing-analytics'
 })
 export class AdSharingAnalyticsComponent {
-
   overview = {
     today: 0,
     last7: 0,
     last28: 0,
     balanceDays: 40,
-    balanceAmount: 0,
+    balanceAmount: 0
   };
 
   payouts = {
@@ -25,7 +24,7 @@ export class AdSharingAnalyticsComponent {
     amount: 0,
     dates: {
       start: 0,
-      end: 0,
+      end: 0
     }
   };
 
@@ -33,12 +32,12 @@ export class AdSharingAnalyticsComponent {
     period: 28,
     dates: {
       start: 0,
-      end: 0,
+      end: 0
     }
   };
 
   items: any[] = [];
-  period : number = 28;
+  period: number = 28;
   username: string = '';
 
   loaded: boolean = false;
@@ -52,10 +51,10 @@ export class AdSharingAnalyticsComponent {
   offset: string = '';
 
   listLoaded: boolean = false;
-
-  constructor(private client: Client, private route: ActivatedRoute) { }
-
   paramsSubscription: Subscription;
+
+  constructor(private client: Client, private route: ActivatedRoute) {}
+
   ngOnInit() {
     this.paramsSubscription = this.route.params.subscribe((params: any) => {
       if (typeof params['username'] !== 'undefined') {
@@ -70,12 +69,11 @@ export class AdSharingAnalyticsComponent {
       }
     });
 
-    this.load()
-      .then(() => {
-        if (this.hasBreakdown()) {
-          this.loadList(28, true);
-        }
-      });
+    this.load().then(() => {
+      if (this.hasBreakdown()) {
+        this.loadList(28, true);
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -84,7 +82,8 @@ export class AdSharingAnalyticsComponent {
 
   load(): Promise<any> {
     this.overviewInProgress = true;
-    return this.client.get(`api/v1/monetization/ads/overview/${this.username}`)
+    return this.client
+      .get(`api/v1/monetization/ads/overview/${this.username}`)
       .then((response: any) => {
         this.overviewInProgress = false;
 
@@ -105,7 +104,7 @@ export class AdSharingAnalyticsComponent {
       });
   }
 
-  loadList(period : number, refresh: boolean): Promise<any> {
+  loadList(period: number, refresh: boolean): Promise<any> {
     this.breakdown.period = period;
     if (refresh) {
       this.offset = '';
@@ -119,7 +118,11 @@ export class AdSharingAnalyticsComponent {
 
     this.inProgress = true;
     this.listLoaded = true;
-    return this.client.get(`api/v1/monetization/ads/list/${this.username}`, { offset: this.offset, period: period })
+    return this.client
+      .get(`api/v1/monetization/ads/list/${this.username}`, {
+        offset: this.offset,
+        period: period
+      })
       .then((response: any) => {
         this.inProgress = false;
 
@@ -130,7 +133,7 @@ export class AdSharingAnalyticsComponent {
         }
 
         if (response.breakdown && response.breakdown.dates) {
-           this.breakdown.dates = response.breakdown.dates;
+          this.breakdown.dates = response.breakdown.dates;
         }
 
         if (response['load-next']) {
@@ -151,7 +154,8 @@ export class AdSharingAnalyticsComponent {
 
     this.payoutRequestInProgress = true;
 
-    this.client.post('api/v1/monetization/ads/payout')
+    this.client
+      .post('api/v1/monetization/ads/payout')
       .then(response => {
         this.payoutRequestInProgress = false;
         this.payouts.available = false;
@@ -167,7 +171,7 @@ export class AdSharingAnalyticsComponent {
   }
 
   isPayoutInProgress() {
-    return this.payouts.status == 'inprogress';
+    return this.payouts.status === 'inprogress';
   }
 
   hasBreakdown() {

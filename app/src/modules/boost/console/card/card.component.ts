@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input } from '@angular/core';
 
-import { BoostService } from "../../boost.service";
+import { BoostService } from '../../boost.service';
 
 @Component({
   moduleId: module.id,
@@ -9,22 +9,25 @@ import { BoostService } from "../../boost.service";
   templateUrl: 'card.component.html'
 })
 export class BoostConsoleCard {
-  constructor(public service: BoostService) { }
-
   boost: any;
   type: string;
 
-  @Input('boost') set _boost(boost: any) {
+  @Input('boost')
+  set _boost(boost: any) {
     this.boost = boost;
     this.type = this.service.getBoostType(this.boost) || '';
   }
 
+  constructor(public service: BoostService) {}
+
   accept() {
     let agreed = true;
 
-    if (this.boost.bidType == 'usd' && this.boost.postToFacebook) {
-      agreed = confirm(`I accept a 5% transaction fee and agree not to delete this content from Facebook`);
-    } else if (this.boost.bidType == 'usd') {
+    if (this.boost.bidType === 'usd' && this.boost.postToFacebook) {
+      agreed = confirm(
+        `I accept a 5% transaction fee and agree not to delete this content from Facebook`
+      );
+    } else if (this.boost.bidType === 'usd') {
       agreed = confirm(`I accept a 5% transaction fee`);
     } else if (this.boost.postToFacebook) {
       agreed = confirm(`I agree not to delete this content from Facebook`);

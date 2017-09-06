@@ -15,8 +15,11 @@ export class HovercardService {
 
   sticky: boolean = false;
 
-  constructor(public client: Client, public cache: CacheService) {
+  static _(client: Client, cache: CacheService) {
+    return new HovercardService(client, cache);
   }
+
+  constructor(public client: Client, public cache: CacheService) {}
 
   show(guid: any, elem: any, anchor: any) {
     if (!guid) {
@@ -27,7 +30,7 @@ export class HovercardService {
     this.unstick();
     this.setAnchor(elem, anchor);
 
-    if (this.guid == guid) {
+    if (this.guid === guid) {
       return;
     }
 
@@ -46,12 +49,13 @@ export class HovercardService {
     this.cache.set(`hovercard-${this.guid}`, false);
 
     let currentGuid = this.guid; // Cache parameter scoping (`this` might change)
-    this.client.get(`api/v1/entities/entity/${this.guid}`, {})
+    this.client
+      .get(`api/v1/entities/entity/${this.guid}`, {})
       .then((response: any) => {
         if (response.entity) {
           this.cache.set(`hovercard-${currentGuid}`, response.entity);
 
-          if (this.guid == response.entity.guid) {
+          if (this.guid === response.entity.guid) {
             this.data = response.entity;
           }
         } else {
@@ -64,7 +68,7 @@ export class HovercardService {
   }
 
   hide(guid: any) {
-    if (this.guid != guid || this.sticky) {
+    if (this.guid !== guid || this.sticky) {
       return;
     }
 
@@ -74,7 +78,7 @@ export class HovercardService {
   }
 
   stick(guid: any) {
-    if (this.guid != guid) {
+    if (this.guid !== guid) {
       return;
     }
 
@@ -110,7 +114,8 @@ export class HovercardService {
     if (anchor.indexOf('left') !== -1) {
       this.anchor.left = 'auto';
       this.anchor.right = docW - left + yPadding;
-    } else { // right: default
+    } else {
+      // right: default
       this.anchor.right = 'auto';
       this.anchor.left = right + yPadding;
     }
@@ -118,13 +123,11 @@ export class HovercardService {
     if (anchor.indexOf('bottom') !== -1) {
       this.anchor.top = 'auto';
       this.anchor.bottom = docH - top - rect.height;
-    } else { // top: default
+    } else {
+      // top: default
       this.anchor.bottom = 'auto';
       this.anchor.top = top;
     }
   }
 
-  static _(client: Client, cache: CacheService) {
-    return new HovercardService(client, cache);
-  }
 }

@@ -22,7 +22,7 @@ export = function buildPlugins(gulp, _plugins, option) {
       try {
         var info = require(join('../../', path, 'plugin.json'));
         if(info.name == '{{plugin.name}}'){
-          throw "Plugin not setup";
+          throw 'Plugin not setup';
         }
 
         // ----------
@@ -44,4 +44,4 @@ export = function buildPlugins(gulp, _plugins, option) {
     });
 
   };
-}
+};

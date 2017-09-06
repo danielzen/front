@@ -1,17 +1,14 @@
-import { Component, EventEmitter, Input, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input } from '@angular/core';
 
 import { Client } from '../../services/api';
-import { WalletService } from '../../services/wallet';
-import { Storage } from '../../services/storage';
-
 
 interface CreditCard {
-  number?: number,
-  type?: string,
-  name?: string,
-  sec?: number,
-  month?: number | string,
-  year?: number | string
+  number?: number;
+  type?: string;
+  name?: string;
+  sec?: number;
+  month?: number | string;
+  year?: number | string;
 }
 
 @Component({
@@ -20,11 +17,11 @@ interface CreditCard {
   outputs: ['inputed', 'done'],
   template: `
     <div class="m-error mdl-color--red mdl-color-text--white" *ngIf="error">
-        {{error}}
+      {{error}}
     </div>
 
     <div class="m-payments-options" style="margin-bottom:8px;" *ngIf="useBitcoin"
-      [class.mdl-card]="useMDLStyling"
+         [class.mdl-card]="useMDLStyling"
     >
       <div id="coinbase-btn" *ngIf="useBitcoin"></div>
     </div>
@@ -38,8 +35,8 @@ interface CreditCard {
       <div class="m-payments-saved--title">Select a card to use</div>
       <ul>
         <li *ngFor="let card of cards"
-          class="m-payments--saved-card-item"
-          (click)="setSavedCard(card.id)"
+            class="m-payments--saved-card-item"
+            (click)="setSavedCard(card.id)"
         >
           <span class="m-payments--saved-card-item-type">{{card.brand}}</span>
           <span class="m-payments--saved-card-item-number">**** {{card.last4}}</span>
@@ -53,54 +50,52 @@ interface CreditCard {
       </ul>
     </div>
 
-    <minds-checkout-card-input (confirm)="setCard($event)" [hidden]="inProgress || confirmation || loading" [useMDLStyling]="useMDLStyling" *ngIf="useCreditCard && !cards.length"></minds-checkout-card-input>
+    <minds-checkout-card-input (confirm)="setCard($event)" [hidden]="inProgress || confirmation || loading" [useMDLStyling]="useMDLStyling"
+                               *ngIf="useCreditCard && !cards.length"></minds-checkout-card-input>
     <div [hidden]="!inProgress" class="m-checkout-loading">
       <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" style="margin:auto; display:block;" [mdl]></div>
       <p>Capturing card details...</p>
     </div>
   `
 })
-
 export class StripeCheckout {
-
   minds = window.Minds;
   loading: boolean = false;
-  inProgress : boolean = false;
-  confirmation : boolean = false;
-  error : string = "";
+  inProgress: boolean = false;
+  confirmation: boolean = false;
+  error: string = '';
   card;
 
-  inputed : EventEmitter<any> = new EventEmitter;
-  done : EventEmitter<any> = new EventEmitter;
+  inputed: EventEmitter<any> = new EventEmitter();
+  done: EventEmitter<any> = new EventEmitter();
 
-  @Input() amount : number = 0;
+  @Input() amount: number = 0;
   @Input() merchant_guid;
-  @Input() gateway : string = "merchants";
+  @Input() gateway: string = 'merchants';
 
   @Input('useMDLStyling') useMDLStyling: boolean = true;
 
   stripe;
   bt_checkout;
-  nonce : string = "";
+  nonce: string = '';
 
   cards: any[] = [];
 
-  @Input() useCreditCard : boolean = true;
-  @Input() useBitcoin : boolean = false;
+  @Input() useCreditCard: boolean = true;
+  @Input() useBitcoin: boolean = false;
 
-	constructor(public client: Client, private cd: ChangeDetectorRef){
-	}
+  constructor(public client: Client, private cd: ChangeDetectorRef) {}
 
-  ngOnInit(){
+  ngOnInit() {
     setTimeout(() => {
       this.setupStripe();
     }, 1000); //sometimes stripe can take a while to download
 
-     this.loadSavedCards();
+    this.loadSavedCards();
   }
 
-  setupStripe(){
-    if((<any>window).Stripe){
+  setupStripe() {
+    if ((<any>window).Stripe) {
       (<any>window).Stripe.setPublishableKey(this.minds.stripe_key);
     }
   }
@@ -109,8 +104,9 @@ export class StripeCheckout {
     this.loading = true;
     this.cards = [];
 
-    return this.client.get(`api/v1/payments/stripe/cards`)
-      .then(({ cards }) => {
+    return this.client
+      .get(`api/v1/payments/stripe/cards`)
+      .then(({cards}) => {
         this.loading = false;
 
         if (cards && cards.length) {
@@ -138,46 +134,45 @@ export class StripeCheckout {
     this.detectChanges();
   }
 
-  setCard(card){
+  setCard(card) {
     // console.log(card);
     this.card = card;
     this.getCardNonce();
     this.detectChanges();
   }
 
-  getCardNonce(){
+  getCardNonce() {
     this.inProgress = true;
 
-    (<any>window).Stripe.card.createToken({
-      number: this.card.number,
-      cvc: this.card.sec,
-      exp_month: this.card.month,
-      exp_year: this.card.year
-    }, (status, response) => {
-
-      if(response.error){
-        this.error = response.error.message;
+    (<any>window).Stripe.card.createToken(
+      {
+        number: this.card.number,
+        cvc: this.card.sec,
+        exp_month: this.card.month,
+        exp_year: this.card.year
+      },
+      (status, response) => {
+        if (response.error) {
+          this.error = response.error.message;
+          this.inProgress = false;
+          this.detectChanges();
+          return false;
+        }
+        this.nonce = response.id;
+        this.inputed.next(this.nonce);
         this.inProgress = false;
         this.detectChanges();
-        return false;
       }
-      this.nonce = response.id;
-      this.inputed.next(this.nonce);
-      this.inProgress = false;
-      this.detectChanges();
-    });
+    );
   }
 
-  purchase(){
-
+  purchase() {
+    //
   }
 
-  detectChanges(){
+  detectChanges() {
     this.cd.markForCheck();
     this.cd.detectChanges();
-  }
-
-  ngOnDestroy(){
   }
 
 }

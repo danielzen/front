@@ -6,8 +6,8 @@ import { Directive, ElementRef } from '@angular/core';
 })
 
 export class MaterialSwitchMock {
-  private element: any;
   mdlSwitch: any;
+  private element: any;
 
   constructor(_element: ElementRef) {
     this.element = _element.nativeElement;

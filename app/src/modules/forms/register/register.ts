@@ -1,22 +1,25 @@
-import { Component, EventEmitter, ViewChild, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  ViewChild,
+  Input,
+  Output
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Client } from '../../../services/api';
 import { SessionFactory } from '../../../services/session';
 import { ReCaptchaComponent } from '../../../modules/captcha/recaptcha/recaptcha.component';
 
-
 @Component({
   moduleId: module.id,
   selector: 'minds-form-register',
   templateUrl: 'register.html'
 })
-
 export class RegisterForm {
-
   session = SessionFactory.build();
-  errorMessage: string = "";
-  twofactorToken: string = "";
+  errorMessage: string = '';
+  twofactorToken: string = '';
   hideLogin: boolean = false;
   inProgress: boolean = false;
   @Input() referrer: string;
@@ -25,7 +28,7 @@ export class RegisterForm {
   form: FormGroup;
   minds = window.Minds;
 
-  @Output() done : EventEmitter<any> = new EventEmitter();
+  @Output() done: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('reCaptcha') reCaptcha: ReCaptchaComponent;
 
@@ -41,11 +44,11 @@ export class RegisterForm {
 
   register(e) {
     e.preventDefault();
-    this.errorMessage = "";
+    this.errorMessage = '';
 
-    if (this.form.value.password != this.form.value.password2) {
+    if (this.form.value.password !== this.form.value.password2) {
       this.reCaptcha.reset();
-      this.errorMessage = "Passwords must match.";
+      this.errorMessage = 'Passwords must match.';
       return;
     }
 
@@ -53,7 +56,8 @@ export class RegisterForm {
 
     this.inProgress = true;
     var self = this; //this <=> that for promises
-    this.client.post('api/v1/register', this.form.value)
+    this.client
+      .post('api/v1/register', this.form.value)
       .then((data: any) => {
         // TODO: [emi/sprint/bison] Find a way to reset controls. Old implementation throws Exception;
 
@@ -62,18 +66,18 @@ export class RegisterForm {
 
         this.done.next(data.user);
       })
-      .catch((e) => {
+      .catch(e => {
         console.log(e);
         this.inProgress = false;
         this.reCaptcha.reset();
 
-        if (e.status == 'failed') {
+        if (e.status === 'failed') {
           //incorrect login details
-          self.errorMessage = "Incorrect username/password. Please try again.";
+          self.errorMessage = 'Incorrect username/password. Please try again.';
           self.session.logout();
         }
 
-        if (e.status == 'error') {
+        if (e.status === 'error') {
           //two factor?
           self.errorMessage = e.message;
           self.session.logout();
@@ -82,5 +86,4 @@ export class RegisterForm {
         return;
       });
   }
-
 }

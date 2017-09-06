@@ -1,7 +1,11 @@
 import { Client } from './api';
 
 export class RichEmbedService {
-  constructor(private client: Client) { }
+  static _(client: Client) {
+    return new RichEmbedService(client);
+  }
+
+  constructor(private client: Client) {}
 
   // Soundcloud
   soundcloud(url: string, maxheight: number = 320): Promise<any> {
@@ -11,7 +15,4 @@ export class RichEmbedService {
     });
   }
 
-  static _(client: Client) {
-    return new RichEmbedService(client);
-  }
 }

@@ -5,21 +5,26 @@ export class ThirdPartyNetworksService {
   inProgress: boolean = false;
 
   private siteUrl: string = '';
-  
+
   private status: any = {};
   private integrations: any;
-  
+  private statusReady: Promise<any>;
+
+  static _(client: Client, zone: NgZone) {
+    return new ThirdPartyNetworksService(client, zone);
+  }
+
   constructor(private client: Client, private zone: NgZone) {
-    this.siteUrl = window.Minds.site_url; 
+    this.siteUrl = window.Minds.site_url;
     this.integrations = window.Minds.thirdpartynetworks;
   }
 
   // General
 
-  private statusReady: Promise<any>;
   getStatus(refresh: boolean = false): Promise<any> {
     if (!this.statusReady || refresh) {
-      this.statusReady = this.client.get('api/v1/thirdpartynetworks/status')
+      this.statusReady = this.client
+        .get('api/v1/thirdpartynetworks/status')
         .then((response: any) => {
           this.overrideStatus(response.thirdpartynetworks);
         });
@@ -29,10 +34,9 @@ export class ThirdPartyNetworksService {
   }
 
   setStatusKey(network: string, value: any) {
-    this.getStatus()
-      .then(() => {
-        this.status[network] = value;
-      });
+    this.getStatus().then(() => {
+      this.status[network] = value;
+    });
   }
 
   overrideStatus(statusResponse: any) {
@@ -96,22 +100,40 @@ export class ThirdPartyNetworksService {
 
   // Facebook
 
+  removeFbLogin(): Promise<any> {
+    this.inProgress = true;
+
+    return this.client
+      .delete('api/v1/thirdpartynetworks/facebook/login')
+      .then(() => {
+        this.inProgress = false;
+
+        if (window.Minds.user) {
+          window.Minds.user.signup_method = 'ex-facebook';
+        }
+      })
+      .catch(e => {
+        this.inProgress = false;
+      });
+  }
+
   private connectFb(): Promise<any> {
     this.inProgress = true;
 
     return new Promise((resolve, reject) => {
-      window.onSuccessCallback = () => this.zone.run(() => {
-        this.getStatus(true)
-          .then(() => {
+      window.onSuccessCallback = () =>
+        this.zone.run(() => {
+          this.getStatus(true).then(() => {
             resolve();
             this.inProgress = false;
           });
-      });
+        });
 
-      window.onErrorCallback = (reason) => this.zone.run(() => {
-        this.inProgress = false;
-        reject(reason);
-      });
+      window.onErrorCallback = reason =>
+        this.zone.run(() => {
+          this.inProgress = false;
+          reject(reason);
+        });
 
       window.open(
         `${this.siteUrl}api/v1/thirdpartynetworks/facebook/link?no_pages=1`,
@@ -124,26 +146,11 @@ export class ThirdPartyNetworksService {
   private removeFb(): Promise<any> {
     this.inProgress = true;
 
-    return this.client.delete('api/v1/thirdpartynetworks/facebook')
+    return this.client
+      .delete('api/v1/thirdpartynetworks/facebook')
       .then(() => {
         this.inProgress = false;
         this.setStatusKey('facebook', { connected: false });
-      })
-      .catch(e => {
-        this.inProgress = false;
-      });
-  }
-
-  removeFbLogin(): Promise<any> {
-    this.inProgress = true;
-
-    return this.client.delete('api/v1/thirdpartynetworks/facebook/login')
-      .then(() => {
-        this.inProgress = false;
-
-        if (window.Minds.user) {
-            window.Minds.user.signup_method = 'ex-facebook';
-        }
       })
       .catch(e => {
         this.inProgress = false;
@@ -156,18 +163,19 @@ export class ThirdPartyNetworksService {
     this.inProgress = true;
 
     return new Promise((resolve, reject) => {
-      window.onSuccessCallback = () => this.zone.run(() => {
-        this.getStatus(true)
-          .then(() => {
+      window.onSuccessCallback = () =>
+        this.zone.run(() => {
+          this.getStatus(true).then(() => {
             resolve();
             this.inProgress = false;
           });
-      });
+        });
 
-      window.onErrorCallback = (reason) => this.zone.run(() => {
-        this.inProgress = false;
-        reject(reason);
-      });
+      window.onErrorCallback = reason =>
+        this.zone.run(() => {
+          this.inProgress = false;
+          reject(reason);
+        });
 
       window.open(
         `${this.siteUrl}api/v1/thirdpartynetworks/twitter/link`,
@@ -180,7 +188,8 @@ export class ThirdPartyNetworksService {
   private removeTw(): Promise<any> {
     this.inProgress = true;
 
-    return this.client.delete('api/v1/thirdpartynetworks/twitter')
+    return this.client
+      .delete('api/v1/thirdpartynetworks/twitter')
       .then(() => {
         this.inProgress = false;
         this.setStatusKey('twitter', { connected: false });
@@ -190,7 +199,4 @@ export class ThirdPartyNetworksService {
       });
   }
 
-  static _(client: Client, zone: NgZone) {
-    return new ThirdPartyNetworksService(client, zone);
-  }
 }

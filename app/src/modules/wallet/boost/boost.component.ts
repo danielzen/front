@@ -1,7 +1,7 @@
 import { Component, ViewChild, ComponentFactoryResolver } from '@angular/core';
 
-import { DynamicHostDirective } from "../../../common/directives/dynamic-host.directive";
-import { BoostConsoleComponent } from "../../boost/console/console.component";
+import { DynamicHostDirective } from '../../../common/directives/dynamic-host.directive';
+import { BoostConsoleComponent } from '../../boost/console/console.component';
 
 @Component({
   moduleId: module.id,
@@ -16,16 +16,16 @@ export class WalletBoostComponent {
   componentRef;
   componentInstance: BoostConsoleComponent;
 
-  constructor(
-    private _componentFactoryResolver: ComponentFactoryResolver
-  ) { }
+  constructor(private _componentFactoryResolver: ComponentFactoryResolver) {}
 
   ngAfterViewInit() {
     this.loadComponent();
   }
 
   loadComponent() {
-    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(BoostConsoleComponent),
+    const componentFactory = this._componentFactoryResolver.resolveComponentFactory(
+        BoostConsoleComponent
+      ),
       viewContainerRef = this.host.viewContainerRef;
 
     viewContainerRef.clear();

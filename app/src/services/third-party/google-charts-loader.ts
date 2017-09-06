@@ -1,15 +1,16 @@
-import { Injectable, NgZone } from "@angular/core";
+import { Injectable, NgZone } from '@angular/core';
 
 @Injectable()
 export class GoogleChartsLoader {
-  private readonly packages = [
-    'corechart',
-    'line',
-  ];
+  private readonly packages = ['corechart', 'line'];
 
   private readyPromise: Promise<any>;
 
-  constructor(private ngZone: NgZone) { }
+  static _(ngZone: NgZone): GoogleChartsLoader {
+    return new GoogleChartsLoader(ngZone);
+  }
+
+  constructor(private ngZone: NgZone) {}
 
   ready(): Promise<any> {
     if (!this.readyPromise) {
@@ -48,7 +49,4 @@ export class GoogleChartsLoader {
     });
   }
 
-  static _(ngZone: NgZone): GoogleChartsLoader {
-    return new GoogleChartsLoader(ngZone);
-  }
 }

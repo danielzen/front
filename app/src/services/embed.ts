@@ -1,6 +1,6 @@
 export class EmbedService {
-
-  constructor() {
+  static _() {
+    return new EmbedService();
   }
 
   getIframeFromObject(object: any) {
@@ -14,7 +14,7 @@ export class EmbedService {
       return this.getIframe(object.guid);
     }
 
-    if (object.custom_type == 'video') {
+    if (object.custom_type === 'video') {
       return this.getIframe(object.custom_data.guid);
     }
 
@@ -29,14 +29,12 @@ export class EmbedService {
     let width = opts.width || 640,
       height = opts.height || 320;
 
-    return `<iframe src="${this.getUrl(guid)}" width="${width}" height="${height}" frameborder="0" allowfullscreen="1"></iframe>`;
+    return `<iframe src="${this.getUrl(
+      guid
+    )}" width="${width}" height="${height}" frameborder="0" allowfullscreen="1"></iframe>`;
   }
 
   getUrl(guid: string) {
     return `${window.Minds.site_url}api/v1/embed/${guid}`;
-  }
-
-  static _() {
-    return new EmbedService();
   }
 }

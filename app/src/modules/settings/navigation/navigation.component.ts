@@ -4,7 +4,4 @@ import { Component } from '@angular/core';
   selector: 'm-settings--navigation',
   templateUrl: 'navigation.component.html'
 })
-
-export class SettingsNavigationComponent {
-
-}
+export class SettingsNavigationComponent {}

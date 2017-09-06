@@ -1,4 +1,4 @@
-import { Component, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { RichEmbedService } from '../../../services/rich-embed';
@@ -6,7 +6,7 @@ import { RichEmbedService } from '../../../services/rich-embed';
 @Component({
   moduleId: module.id,
   selector: 'minds-rich-embed',
-  inputs: [ '_src: src', '_preview: preview', 'maxheight', 'cropImage' ],
+  inputs: ['_src: src', '_preview: preview', 'maxheight', 'cropImage'],
   templateUrl: 'rich-embed.html'
 })
 export class MindsRichEmbed {
@@ -18,8 +18,10 @@ export class MindsRichEmbed {
   embeddedInline: boolean = false;
   cropImage: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer, private service: RichEmbedService){
-  }
+  private lastInlineEmbedParsed: string;
+
+  constructor(private sanitizer: DomSanitizer,
+              private service: RichEmbedService) {}
 
   set _src(value: any) {
     if (!value) {
@@ -47,11 +49,16 @@ export class MindsRichEmbed {
     // Inline Embedding
     let inlineEmbed = this.parseInlineEmbed(this.inlineEmbed);
 
-    if (inlineEmbed && inlineEmbed.id && this.inlineEmbed && this.inlineEmbed.id) {
+    if (
+      inlineEmbed &&
+      inlineEmbed.id &&
+      this.inlineEmbed &&
+      this.inlineEmbed.id
+    ) {
       // Do not replace if ID codes are the same
       // This is needed because angular sometimes replaces the innerHTML
       // of the embedded player and restarts the videos
-      if (inlineEmbed.id == this.inlineEmbed.id) {
+      if (inlineEmbed.id === this.inlineEmbed.id) {
         return;
       }
     }
@@ -67,17 +74,14 @@ export class MindsRichEmbed {
       this.embeddedInline = true;
 
       if (this.inlineEmbed.htmlProvisioner) {
-        this.inlineEmbed.htmlProvisioner()
-          .then((html) => {
-            this.inlineEmbed.html = html;
-          });
+        this.inlineEmbed.htmlProvisioner().then(html => {
+          this.inlineEmbed.html = html;
+        });
 
         // @todo: catch any error here and forcefully window.open to destination
       }
     }
   }
-
-  private lastInlineEmbedParsed: string;
 
   parseInlineEmbed(current?: any) {
     if (!this.src || !this.src.perma_url) {
@@ -101,7 +105,8 @@ export class MindsRichEmbed {
       if (matches[1]) {
         return {
           id: `video-youtube-${matches[1]}`,
-          className: 'm-rich-embed-video m-rich-embed-video-iframe m-rich-embed-video-youtube',
+          className:
+            'm-rich-embed-video m-rich-embed-video-iframe m-rich-embed-video-youtube',
           html: this.sanitizer.bypassSecurityTrustHtml(`<iframe
           src="https://www.youtube.com/embed/${matches[1]}?controls=2&modestbranding=1&origin=${origin}&rel=0"
           frameborder="0"
@@ -118,7 +123,8 @@ export class MindsRichEmbed {
       if (matches[1]) {
         return {
           id: `video-vimeo-${matches[1]}`,
-          className: 'm-rich-embed-video m-rich-embed-video-iframe m-rich-embed-video-vimeo',
+          className:
+            'm-rich-embed-video m-rich-embed-video-iframe m-rich-embed-video-vimeo',
           html: this.sanitizer.bypassSecurityTrustHtml(`<iframe
           src="https://player.vimeo.com/video/${matches[1]}?autoplay=1&title=0&byline=0&portrait=0"
           frameborder="0"
@@ -135,11 +141,13 @@ export class MindsRichEmbed {
       if (matches[1]) {
         return {
           id: `audio-soundcloud-${matches[1]}`,
-          className: 'm-rich-embed-audio m-rich-embed-audio-iframe m-rich-embed-audio-soundcloud',
+          className:
+            'm-rich-embed-audio m-rich-embed-audio-iframe m-rich-embed-audio-soundcloud',
           htmlProvisioner: () => {
-            return this.service.soundcloud(url, this.maxheight)
-              .then((response) => {
-                return this.sanitizer.bypassSecurityTrustHtml(response.html)
+            return this.service
+              .soundcloud(url, this.maxheight)
+              .then(response => {
+                return this.sanitizer.bypassSecurityTrustHtml(response.html);
               });
           },
           playable: true
@@ -154,7 +162,8 @@ export class MindsRichEmbed {
       if (matches[1]) {
         return {
           id: `audio-spotify-${matches[1]}`,
-          className: 'm-rich-embed-audio m-rich-embed-audio-iframe m-rich-embed-audio-spotify',
+          className:
+            'm-rich-embed-audio m-rich-embed-audio-iframe m-rich-embed-audio-spotify',
           html: this.sanitizer.bypassSecurityTrustHtml(`<iframe
           style="height: ${this.maxheight}px;"
           src="https://embed.spotify.com/?uri=spotify:track:${matches[1]}"
@@ -178,8 +187,10 @@ export class MindsRichEmbed {
 
         return {
           id: `image-giphy-${matches[1]}`,
-          className: 'm-rich-embed-image m-rich-embed-image-iframe m-rich-embed-image-giphy',
-          html: this.sanitizer.bypassSecurityTrustHtml(`<iframe src="//giphy.com/embed/${id}"
+          className:
+            'm-rich-embed-image m-rich-embed-image-iframe m-rich-embed-image-giphy',
+          html: this.sanitizer
+            .bypassSecurityTrustHtml(`<iframe src="//giphy.com/embed/${id}"
           frameBorder="0" class="giphy-embed" allowFullScreen></iframe>`),
           playable: true
         };

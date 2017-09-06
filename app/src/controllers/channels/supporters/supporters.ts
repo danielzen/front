@@ -9,33 +9,32 @@ import { SessionFactory } from '../../../services/session';
   inputs: ['channel'],
   templateUrl: 'supporters.html'
 })
-
 export class ChannelSupporters {
   session = SessionFactory.build();
 
-  guid : string;
-  users : Array<any> = [];
+  guid: string;
+  users: Array<any> = [];
 
-  offset : string = "";
-  moreData : boolean = true;
-  inProgress : boolean = false;
+  offset: string = '';
+  moreData: boolean = true;
+  inProgress: boolean = false;
 
-  constructor(public client: Client){
-  }
+  constructor(public client: Client) {}
 
   set channel(value: any) {
     this.guid = value.guid;
     this.load();
   }
 
-  load(){
-    if(this.inProgress)
-      return;
+  load() {
+    if (this.inProgress) return;
     this.inProgress = true;
-    this.client.get('api/v1/payments/subscribers/' + this.guid + '/exclusive', {  offset: this.offset  })
-      .then((response : any) => {
-
-        if(!response.subscribers || response.subscribers.length == 0){
+    this.client
+      .get('api/v1/payments/subscribers/' + this.guid + '/exclusive', {
+        offset: this.offset
+      })
+      .then((response: any) => {
+        if (!response.subscribers || response.subscribers.length === 0) {
           this.moreData = false;
           this.inProgress = false;
           return;
@@ -46,9 +45,8 @@ export class ChannelSupporters {
         this.offset = response['load-next'];
         this.inProgress = false;
       })
-      .catch((e) => {
+      .catch(e => {
         this.inProgress = false;
       });
   }
-
 }

@@ -1,13 +1,17 @@
-import { Directive, EventEmitter, ElementRef } from '@angular/core';
+import { Directive, ElementRef, EventEmitter } from '@angular/core';
 import { Observable, Subscription } from 'rxjs/Rx';
 
 @Directive({
   selector: '[commentsScroll]',
-  inputs: [ '_emitter: emitter' ],
-  outputs: [ 'previous', 'next' ],
+  inputs: ['_emitter: emitter'],
+  outputs: ['previous', 'next'],
   exportAs: 'commentsScroll'
 })
 export class CommentsScrollDirective {
+  emitter: EventEmitter<any>;
+  previous: EventEmitter<any> = new EventEmitter();
+  next: EventEmitter<any> = new EventEmitter();
+
   private DEBOUNCE_TIME_MS = 1000 / 30; // fps
   private STICK_INTERVAL_MS = this.DEBOUNCE_TIME_MS * 30; // frames
   private SCROLL_THRESHOLD = 12; // pixels
@@ -16,10 +20,6 @@ export class CommentsScrollDirective {
   private scrollSubscription: Subscription;
   private stickInterval: any;
   private stickTo: string;
-
-  emitter: EventEmitter<any>;
-  previous: EventEmitter<any> = new EventEmitter();
-  next: EventEmitter<any> = new EventEmitter();
 
   private emitterSubscription: Subscription;
 
@@ -56,7 +56,7 @@ export class CommentsScrollDirective {
     this.scrollSubscription = this.scroll
       .debounceTime(this.DEBOUNCE_TIME_MS / 5)
       .subscribe((event: Event) => this.run(event));
-    
+
     this.setStick();
   }
 
@@ -97,7 +97,7 @@ export class CommentsScrollDirective {
       case 'top':
         this.top();
         break;
-      
+
       case 'bottom':
         this.bottom();
         break;
@@ -113,12 +113,15 @@ export class CommentsScrollDirective {
     if (this.stickInterval) {
       clearInterval(this.stickInterval);
     }
-    this.stickInterval = setInterval(() => this.stick(), this.STICK_INTERVAL_MS);
+    this.stickInterval = setInterval(
+      () => this.stick(),
+      this.STICK_INTERVAL_MS
+    );
   }
 
   top(run?: boolean, stick?: boolean) {
     this.elementRef.nativeElement.scrollTop = 0;
-    
+
     if (stick) {
       this.setStick('top');
     }
@@ -130,7 +133,7 @@ export class CommentsScrollDirective {
 
   bottom(run?: boolean, stick?: boolean) {
     this.elementRef.nativeElement.scrollTop = this.elementRef.nativeElement.scrollHeight;
-    
+
     if (stick) {
       this.setStick('bottom');
     }

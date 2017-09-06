@@ -1,26 +1,26 @@
-import { Component, Input, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from "@angular/core";
-import { CurrencyPipe } from "@angular/common";
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 
-import { OverlayModalService } from "../../../services/ux/overlay-modal";
-import { Client } from "../../../services/api";
-import { Session, SessionFactory } from "../../../services/session";
+import { OverlayModalService } from '../../../services/ux/overlay-modal';
+import { Client } from '../../../services/api';
+import { Session, SessionFactory } from '../../../services/session';
 
 type CurrencyType = 'points' | 'usd' | 'btc';
 type BoostType = 'p2p' | 'newsfeed' | 'content';
 
 interface BoostStruc {
-  amount: number | '',
-  currency: CurrencyType | null,
-  type: BoostType | null,
+  amount: number | '';
+  currency: CurrencyType | null;
+  type: BoostType | null;
 
-  categories: string[],
-  priority: boolean,
+  categories: string[];
+  priority: boolean;
 
-  target: any,
-  scheduledTs: number,
-  postToFacebook: boolean,
+  target: any;
+  scheduledTs: number;
+  postToFacebook: boolean;
 
-  nonce: string
+  nonce: string;
 }
 
 export class VisibleBoostError extends Error {
@@ -29,14 +29,11 @@ export class VisibleBoostError extends Error {
 
 @Component({
   moduleId: module.id,
-  providers: [ CurrencyPipe ],
+  providers: [CurrencyPipe],
   selector: 'm-boost--creator',
   templateUrl: 'creator.component.html'
 })
 export class BoostCreatorComponent implements AfterViewInit {
-  @ViewChild('amountEditor') private _amountEditor: ElementRef;
-  @ViewChild('targetEditor') private _targetEditor: ElementRef;
-
   object: any = {};
 
   boost: BoostStruc = {
@@ -55,11 +52,11 @@ export class BoostCreatorComponent implements AfterViewInit {
 
     // Payment
     nonce: ''
-  }
+  };
 
-  allowedTypes: { newsfeed?, p2p?, content? } = {};
+  allowedTypes: { newsfeed?; p2p?; content? } = {};
 
-  categories: { id, label }[] = [];
+  categories: { id; label }[] = [];
 
   rates = {
     balance: null,
@@ -71,7 +68,7 @@ export class BoostCreatorComponent implements AfterViewInit {
     minUsd: 1,
     priority: 1,
     maxCategories: 3
-  }
+  };
 
   editingAmount: boolean = false;
   editingTarget: boolean = false;
@@ -87,16 +84,18 @@ export class BoostCreatorComponent implements AfterViewInit {
 
   session: Session = SessionFactory.build();
 
-  @Input('object') set data(object) {
+  @Input('object')
+  set data(object) {
     this.object = object;
   }
 
-  constructor(
-    private _changeDetectorRef: ChangeDetectorRef,
-    private overlayModal: OverlayModalService,
-    private client: Client,
-    private currency: CurrencyPipe
-  ) { }
+  @ViewChild('targetEditor') private _targetEditor: ElementRef;
+  private _searchThrottle;
+
+  constructor(private _changeDetectorRef: ChangeDetectorRef,
+              private overlayModal: OverlayModalService,
+              private client: Client,
+              private currency: CurrencyPipe) {}
 
   ngOnInit() {
     this.loadCategories();
@@ -123,7 +122,7 @@ export class BoostCreatorComponent implements AfterViewInit {
       });
     }
 
-    this.categories.sort((a, b) => a.label > b.label ? 1 : -1);
+    this.categories.sort((a, b) => (a.label > b.label ? 1 : -1));
   }
 
   /**
@@ -133,7 +132,8 @@ export class BoostCreatorComponent implements AfterViewInit {
     // TODO: Move to service and cache (maybe?)
     this.inProgress = true;
 
-    return this.client.get(`api/v1/boost/rates`)
+    return this.client
+      .get(`api/v1/boost/rates`)
       .then((rates: any) => {
         this.inProgress = false;
         this.rates = rates;
@@ -229,12 +229,12 @@ export class BoostCreatorComponent implements AfterViewInit {
     //}
   }
 
-  setBoostAmount(amount: string){
-    if(!amount){
+  setBoostAmount(amount: string) {
+    if (!amount) {
       this.boost.amount = 0;
       return;
     }
-    amount = amount.replace(/,/g, "");
+    amount = amount.replace(/,/g, '');
     this.boost.amount = parseInt(amount);
   }
 
@@ -260,8 +260,12 @@ export class BoostCreatorComponent implements AfterViewInit {
    * Round by 2 decimals if P2P and currency is unset or not points. If not, round down to an integer.
    */
   roundAmount() {
-    if ((this.boost.type == 'p2p') && (!this.boost.currency || (this.boost.currency != 'points'))) {
-      this.boost.amount = Math.round(parseFloat(`${this.boost.amount}`) * 100) / 100;
+    if (
+      this.boost.type === 'p2p' &&
+      (!this.boost.currency || this.boost.currency !== 'points')
+    ) {
+      this.boost.amount =
+        Math.round(parseFloat(`${this.boost.amount}`) * 100) / 100;
     } else {
       this.boost.amount = Math.floor(<number>this.boost.amount);
     }
@@ -274,7 +278,7 @@ export class BoostCreatorComponent implements AfterViewInit {
    */
   calcBaseCharges(type: string): number {
     // P2P should just round down amount points. It's bid based.
-    if (this.boost.type == 'p2p') {
+    if (this.boost.type === 'p2p') {
       switch (type) {
         case 'points':
           return Math.floor(<number>this.boost.amount);
@@ -305,7 +309,7 @@ export class BoostCreatorComponent implements AfterViewInit {
   calcCharges(type: string): number {
     const charges = this.calcBaseCharges(type);
 
-    return charges + (charges * this.getPriorityRate());
+    return charges + charges * this.getPriorityRate();
   }
 
   /**
@@ -320,7 +324,7 @@ export class BoostCreatorComponent implements AfterViewInit {
    */
   getPriorityRate(force?: boolean): number {
     // NOTE: No priority on P2P
-    if (force || (this.boost.type != 'p2p' && this.boost.priority)) {
+    if (force || (this.boost.type !== 'p2p' && this.boost.priority)) {
       return this.rates.priority;
     }
 
@@ -371,7 +375,10 @@ export class BoostCreatorComponent implements AfterViewInit {
     this._changeDetectorRef.detectChanges();
 
     if (this._targetEditor.nativeElement) {
-      setTimeout(() => (<HTMLInputElement>this._targetEditor.nativeElement).focus(), 100);
+      setTimeout(
+        () => (<HTMLInputElement>this._targetEditor.nativeElement).focus(),
+        100
+      );
     }
   }
 
@@ -383,7 +390,6 @@ export class BoostCreatorComponent implements AfterViewInit {
     this.showErrors();
   }
 
-  private _searchThrottle;
   /**
    * Searches the current target query on the server
    */
@@ -393,12 +399,12 @@ export class BoostCreatorComponent implements AfterViewInit {
       this._searchThrottle = void 0;
     }
 
-    if (this.targetQuery.charAt(0) != '@') {
+    if (this.targetQuery.charAt(0) !== '@') {
       this.targetQuery = '@' + this.targetQuery;
     }
 
     let query = this.targetQuery;
-    if (query.charAt(0) == '@') {
+    if (query.charAt(0) === '@') {
       query = query.substr(1);
     }
 
@@ -409,20 +415,21 @@ export class BoostCreatorComponent implements AfterViewInit {
 
     // TODO: Use /suggest?
     this._searchThrottle = setTimeout(() => {
-      this.client.get(`api/v1/search`, {
-        q: query,
-        type: 'user',
-        view: 'json',
-        limit: 8
-      })
-        .then(({ entities }) => {
+      this.client
+        .get(`api/v1/search`, {
+          q: query,
+          type: 'user',
+          view: 'json',
+          limit: 8
+        })
+        .then(({entities}) => {
           if (!entities) {
             return;
           }
 
           this.targetResults = entities;
         })
-        .catch(e => console.error('Cannot load results', e))
+        .catch(e => console.error('Cannot load results', e));
     });
   }
 
@@ -434,7 +441,7 @@ export class BoostCreatorComponent implements AfterViewInit {
       event.preventDefault();
     }
 
-    this.boost.target = { ...target };
+    this.boost.target = {...target};
     this.targetResults = [];
     this.targetQuery = '@' + target.username;
     this.showErrors();
@@ -464,11 +471,13 @@ export class BoostCreatorComponent implements AfterViewInit {
       throw new Error('You should select a type.');
     }
 
-    if (this.boost.currency == 'points') {
+    if (this.boost.currency === 'points') {
       const charges = this.calcCharges(this.boost.currency);
 
       if (charges > this.rates.balance) {
-        throw new VisibleBoostError(`You only have ${this.rates.balance} points.`);
+        throw new VisibleBoostError(
+          `You only have ${this.rates.balance} points.`
+        );
       }
     } else {
       if (!this.boost.nonce) {
@@ -476,22 +485,35 @@ export class BoostCreatorComponent implements AfterViewInit {
       }
     }
 
-    if (this.boost.type == 'p2p') {
+    if (this.boost.type === 'p2p') {
       if (!this.boost.target) {
         throw new Error('You should select a target.');
       }
 
-      if (this.boost.target && (this.boost.target.guid == this.session.getLoggedInUser().guid)) {
+      if (
+        this.boost.target &&
+        this.boost.target.guid === this.session.getLoggedInUser().guid
+      ) {
         throw new VisibleBoostError('You cannot boost to yourself.');
       }
 
-      if (this.boost.target && !this.boost.target.merchant && (this.boost.currency != 'points')) {
+      if (
+        this.boost.target &&
+        !this.boost.target.merchant &&
+        this.boost.currency !== 'points'
+      ) {
         // TODO: Implement BTC (in message)
         throw new VisibleBoostError('User cannot receive USD.');
       }
     } else {
-      if (this.boost.amount < this.rates.min || this.boost.amount > this.rates.cap) {
-        throw new VisibleBoostError(`You must boost between ${this.rates.min} and ${this.rates.cap} views.`);
+      if (
+        this.boost.amount < this.rates.min ||
+        this.boost.amount > this.rates.cap
+      ) {
+        throw new VisibleBoostError(
+          `You must boost between ${this.rates.min} and ${this.rates
+            .cap} views.`
+        );
       }
 
       //if (!this.boost.categories.length) {
@@ -499,9 +521,15 @@ export class BoostCreatorComponent implements AfterViewInit {
       //}
     }
 
-    if (this.boost.currency == 'usd') {
+    if (this.boost.currency === 'usd') {
       if (this.calcCharges(this.boost.currency) < this.rates.minUsd) {
-        throw new VisibleBoostError(`You must spend at least ${this.currency.transform(this.rates.minUsd, 'USD', true)} USD`);
+        throw new VisibleBoostError(
+          `You must spend at least ${this.currency.transform(
+            this.rates.minUsd,
+            'USD',
+            true
+          )} USD`
+        );
       }
     }
   }
@@ -553,37 +581,48 @@ export class BoostCreatorComponent implements AfterViewInit {
     let request: Promise<any>;
 
     if (this.boost.type !== 'p2p') {
-      request = this.client.post(`api/v1/boost/${this.object.type}/${this.object.guid}/${this.object.owner_guid}`, {
-        bidType: this.boost.currency,
-        impressions: this.boost.amount,
-        categories: this.boost.categories,
-        priority: this.boost.priority ? 1 : null,
-        paymentMethod: this.boost.nonce
-      })
+      request = this.client
+        .post(
+          `api/v1/boost/${this.object.type}/${this.object.guid}/${this.object
+            .owner_guid}`,
+          {
+            bidType: this.boost.currency,
+            impressions: this.boost.amount,
+            categories: this.boost.categories,
+            priority: this.boost.priority ? 1 : null,
+            paymentMethod: this.boost.nonce
+          }
+        )
         .then(response => {
-          return { done: true };
+          return {done: true};
         });
     } else {
-      request = this.client.post(`api/v1/boost/peer/${this.object.guid}/${this.object.owner_guid}`, {
-        type: this.boost.currency == 'points' ? 'points' : 'pro', // TODO: BTC
-        bid: this.boost.amount,
-        destination: this.boost.target.guid,
-        scheduledTs: this.boost.scheduledTs,
-        postToFacebook: this.boost.postToFacebook ? 1 : null,
-        nonce: this.boost.nonce
-      })
+      request = this.client
+        .post(
+          `api/v1/boost/peer/${this.object.guid}/${this.object.owner_guid}`,
+          {
+            type: this.boost.currency === 'points' ? 'points' : 'pro', // TODO: BTC
+            bid: this.boost.amount,
+            destination: this.boost.target.guid,
+            scheduledTs: this.boost.scheduledTs,
+            postToFacebook: this.boost.postToFacebook ? 1 : null,
+            nonce: this.boost.nonce
+          }
+        )
         .then(response => {
-          return { done: true };
+          return {done: true};
         })
         .catch(e => {
-          if (e && e.stage == 'transaction') {
-            throw new Error('Sorry, your payment failed. Please, try again or use another card');
+          if (e && e.stage === 'transaction') {
+            throw new Error(
+              'Sorry, your payment failed. Please, try again or use another card'
+            );
           }
         });
     }
 
     request
-      .then(({ done }) => {
+      .then(({done}) => {
         this.inProgress = false;
 
         if (done) {

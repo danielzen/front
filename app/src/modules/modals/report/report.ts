@@ -3,7 +3,7 @@ import { Client } from '../../../services/api';
 
 @Component({
   selector: 'm-modal-report',
-  inputs: [ 'open', '_object: object' ],
+  inputs: ['open', '_object: object'],
   outputs: ['closed'],
   template: `
     <m-modal [open]="open" (closed)="close($event)" class="mdl-color-text--blue-grey-700">
@@ -49,12 +49,10 @@ import { Client } from '../../../services/api';
     </m-modal>
   `
 })
-
 export class ReportModal {
-
-  open : boolean = false;
-  closed : EventEmitter<any> = new EventEmitter();
-  object : any = {};
+  open: boolean = false;
+  closed: EventEmitter<any> = new EventEmitter();
+  object: any = {};
 
   inProgress: boolean = false;
   sent: boolean = false;
@@ -67,19 +65,18 @@ export class ReportModal {
     { value: 'annoying', label: 'It shouldn\'t be on Minds' }
   ];
 
-  constructor(public client: Client) {
-  }
+  constructor(public client: Client) {}
 
-  set _object(object: any){
+  set _object(object: any) {
     this.object = object;
   }
 
-  close(e?){
+  close(e?) {
     this.open = false;
     this.closed.next(true);
   }
 
-  send(){
+  send() {
     this.inProgress = true;
 
     let subject = this.subject;
@@ -88,22 +85,22 @@ export class ReportModal {
       return;
     }
 
-    this.client.post(`api/v1/entities/report/${this.object.guid}`, { subject })
-    .then((response: any) => {
-      this.inProgress = false;
+    this.client
+      .post(`api/v1/entities/report/${this.object.guid}`, { subject })
+      .then((response: any) => {
+        this.inProgress = false;
 
-      if (response.done) {
-        this.sent = true;
-      } else {
+        if (response.done) {
+          this.sent = true;
+        } else {
+          this.close();
+          alert('There was an error sending your report.');
+        }
+      })
+      .catch(e => {
+        this.inProgress = false;
         this.close();
-        alert('There was an error sending your report.');
-      }
-    })
-    .catch(e => {
-      this.inProgress = false;
-      this.close();
-      alert(e.message ? e.message : e);
-    });
+        alert(e.message ? e.message : e);
+      });
   }
-
 }

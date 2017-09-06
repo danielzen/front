@@ -1,8 +1,19 @@
-import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ElementRef,
+  ViewChild,
+  OnInit
+} from '@angular/core';
 
-import { WireThresholdStruc, WireRewardsType } from "../interfaces/wire.interfaces";
-import { WireTypeLabels } from "../wire";
-import { Session, SessionFactory } from "../../../services/session";
+import {
+  WireThresholdStruc,
+  WireRewardsType
+} from '../interfaces/wire.interfaces';
+import { WireTypeLabels } from '../wire';
+import { Session, SessionFactory } from '../../../services/session';
 
 @Component({
   selector: 'm-wire-threshold-input',
@@ -11,13 +22,17 @@ import { Session, SessionFactory } from "../../../services/session";
 export class WireThresholdInputComponent implements OnInit {
   threshold: WireThresholdStruc;
 
-  @Input('threshold') set _threshold(threshold: WireThresholdStruc) {
+  @Input('threshold')
+  set _threshold(threshold: WireThresholdStruc) {
     this.threshold = threshold;
     this.enabled = !!threshold;
 
     if (!this.threshold) {
       let currency: WireRewardsType = 'points';
-      if (this.session.getLoggedInUser() && this.session.getLoggedInUser().merchant)
+      if (
+        this.session.getLoggedInUser() &&
+        this.session.getLoggedInUser().merchant
+      )
         currency = 'money';
       this.threshold = {
         type: currency,
@@ -26,8 +41,12 @@ export class WireThresholdInputComponent implements OnInit {
     }
   }
 
-  @Output('thresholdChange') thresholdChangeEmitter: EventEmitter<WireThresholdStruc> = new EventEmitter<WireThresholdStruc>();
-  @Output('validThreshold') validThresholdEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output('thresholdChange')
+  thresholdChangeEmitter: EventEmitter<WireThresholdStruc> = new EventEmitter<
+    WireThresholdStruc
+  >();
+  @Output('validThreshold')
+  validThresholdEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   enabled: boolean = false;
 
@@ -69,14 +88,14 @@ export class WireThresholdInputComponent implements OnInit {
       return true;
     }
 
-    return !!(this.threshold.type && (this.threshold.min > 0));
+    return !!(this.threshold.type && this.threshold.min > 0);
   }
 
   focusInput() {
     setTimeout(() => {
       if (this.minAmountInput.nativeElement) {
         this.minAmountInput.nativeElement.focus();
-      };
+      }
     }, 0);
   }
 

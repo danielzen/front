@@ -6,4 +6,12 @@ import { SafePipe } from './safe';
 import { ListablePipe } from './listable';
 import { ExcerptPipe } from './excerpt';
 
-export const MINDS_PIPES = [ AbbrPipe, DomainPipe, TagsPipe, SanitizePipe, SafePipe, ListablePipe, ExcerptPipe ];
+export const MINDS_PIPES = [
+  AbbrPipe,
+  DomainPipe,
+  TagsPipe,
+  SanitizePipe,
+  SafePipe,
+  ListablePipe,
+  ExcerptPipe
+];

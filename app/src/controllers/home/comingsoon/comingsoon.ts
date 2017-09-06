@@ -4,7 +4,4 @@ import { Component } from '@angular/core';
   moduleId: module.id,
   templateUrl: 'comingsoon.html'
 })
-
-export class ComingSoon {
-
-}
+export class ComingSoon {}

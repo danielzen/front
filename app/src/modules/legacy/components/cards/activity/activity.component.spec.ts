@@ -11,7 +11,7 @@ import { Client } from '../../../../../services/api/client';
 import { MaterialMock } from '../../../../../../tests/material-mock.spec';
 import { scrollServiceMock } from '../../../../../../tests/scroll-service-mock.spec';
 import { ScrollService } from '../../../../../services/ux/scroll';
-import { AttachmentService } from "../../../../../services/attachment";
+import { AttachmentService } from '../../../../../services/attachment';
 import { attachmentServiceMock } from '../../../../../../tests/attachment-service-mock.spec';
 import { translationServiceMock } from '../../../../../../tests/translation-service-mock.spec';
 import { TranslationService } from '../../../../../services/translation';
@@ -34,12 +34,11 @@ export class WireLockScreenComponentMock {
 
 @Component({
   selector: 'm-translate',
-  inputs: [ '_open: open', '_entity: entity', '_translateEvent: translateEvent' ],
-  outputs: [ 'onTranslateInit', 'onTranslate', 'onTranslateError' ],
+  inputs: ['_open: open', '_entity: entity', '_translateEvent: translateEvent'],
+  outputs: ['onTranslateInit', 'onTranslate', 'onTranslateError'],
   exportAs: 'translate',
   template: ''
 })
-
 export class TranslateMock {
   onTranslateInit: EventEmitter<any> = new EventEmitter();
   onTranslate: EventEmitter<any> = new EventEmitter();
@@ -66,12 +65,15 @@ export class TranslateMock {
   };
 
   set _entity(value: any) {
+    //
   }
 
   select(language: string) {
+    //
   }
 
   translate($event: any = {}) {
+    //
   }
 }
 
@@ -84,44 +86,53 @@ export class WireThresholdInputComponentMock {
 
   @Input('threshold')
   set _threshold(threshold: any) {
+    //
   }
 
-  @Output('thresholdChange') thresholdChangeEmitter: EventEmitter<any> = new EventEmitter<any>();
+  @Output('thresholdChange')
+  thresholdChangeEmitter: EventEmitter<any> = new EventEmitter<any>();
   enabled: boolean = false;
 
   toggle() {
+    //
   }
 
   setType(type: any) {
+    //
   }
 }
 
 @Component({
   selector: 'minds-newsfeed-poster',
-  inputs: [ '_container_guid: containerGuid', 'accessId', 'message' ],
-  outputs: [ 'load' ],
+  inputs: ['_container_guid: containerGuid', 'accessId', 'message'],
+  outputs: ['load'],
   template: ''
 })
-
 export class PosterMock {
   load: EventEmitter<any> = new EventEmitter();
 
   set accessId(access_id: any) {
+    //
   }
 
   set message(value: any) {
+    //
   }
 
   post() {
+    //
   }
 
   uploadAttachment(file: HTMLInputElement, event) {
+    //
   }
 
   removeAttachment(file: HTMLInputElement) {
+    //
   }
 
   getPostPreview(message) {
+    //
   }
 }
 
@@ -138,18 +149,22 @@ export class VideoComponentMock {
 
   @Input('preview')
   set _preview(value) {
-  };
+    //
+  }
 
   @Input('previewPlayback')
   set _previewPlayback(value) {
+    //
   }
 
   @Input('src')
   set _src(value: string | any[]) {
+    //
   }
 
   @Input('autoplay')
   set _autoplay(value: any) {
+    //
   }
 
   @Input('poster') poster: any;
@@ -157,17 +172,20 @@ export class VideoComponentMock {
   @Input('playCount') playCount: any;
 
   listen() {
+    //
   }
 
   unListen() {
+    //
   }
 
   trigger(type: string, ev: Event) {
+    //
   }
 
   exitFullScreen() {
+    //
   }
-
 }
 
 @Component({
@@ -274,7 +292,7 @@ export class ModalConfirmMock {
 
 @Directive({
   selector: '[hovercard]',
-  inputs: [ '_hovercard: hovercard', '_hovercardAnchor: hovercardAnchor' ],
+  inputs: ['_hovercard: hovercard', '_hovercardAnchor: hovercardAnchor'],
   host: {
     '(mouseenter)': 'show()',
     '(mouseleave)': 'hide()',
@@ -283,18 +301,23 @@ export class ModalConfirmMock {
 })
 export class HovercardMock {
   set _hovercard(value: any) {
+    //
   }
 
   set _hovercardAnchor(value: any) {
+    //
   }
 
   show() {
+    //
   }
 
   hide() {
+    //
   }
 
   hideForcefully() {
+    //
   }
 }
 
@@ -302,13 +325,11 @@ export class HovercardMock {
   selector: 'm-read-more--button',
   template: ''
 })
-
-export class ReadMoreButtonComponentMock {
-}
+export class ReadMoreButtonComponentMock {}
 
 @Directive({
   selector: '[autoGrow]',
-  inputs: [ 'autoGrow', '_model: ngModel' ],
+  inputs: ['autoGrow', '_model: ngModel'],
   host: {
     '(keydown)': 'grow()',
     '(paste)': 'grow()',
@@ -316,21 +337,21 @@ export class ReadMoreButtonComponentMock {
     '(ngModelChange)': 'grow()'
   }
 })
-
-
 export class AutoGrowMock {
   autoGrow: any;
 
   set _model(value: any) {
+    //
   }
 
   grow() {
+    //
   }
 }
+
 // END MOCKS
 
 describe('Activity', () => {
-
   let comp: Activity;
   let fixture: ComponentFixture<Activity>;
   const defaultActivity = {
@@ -351,28 +372,60 @@ describe('Activity', () => {
   };
 
   function getActivityMetrics(): DebugElement {
-    return fixture.debugElement.query(By.css('.impressions-tag.m-activity--metrics'));
+    return fixture.debugElement.query(
+      By.css('.impressions-tag.m-activity--metrics')
+    );
   }
 
   function getActivityMetric(i: number): DebugElement {
-    return fixture.debugElement.query(By.css(`.m-activity--metrics > .m-activity--metrics-metric:nth-child(${i}) > span`));
+    return fixture.debugElement.query(
+      By.css(
+        `.m-activity--metrics > .m-activity--metrics-metric:nth-child(${i}) > span`
+      )
+    );
   }
 
-  beforeEach(async(() => {
-
-    TestBed.configureTestingModule({
-      declarations: [ TagsPipe, DomainPipe, AbbrPipe, MindsRichEmbed, MaterialMock, HovercardMock, WireLockScreenComponentMock, TranslateMock, WireThresholdInputComponentMock, PosterMock, VideoComponentMock, VideoAdsMock, RemindMock, ThumbsUpButtonMock, ThumbsDownButtonMock, ButtonCommentMock, ButtonRemindMock, MindsCommentsMock, WireButtonMock, ModalShareMock, ModalReportMock, ModalConfirmMock, ReadMoreButtonComponentMock, AutoGrowMock, Activity ], // declare the test component
-      imports: [ RouterTestingModule, FormsModule/*, CommonModule*/ ],
-      providers: [
-        { provide: Client, useValue: clientMock },
-        { provide: ScrollService, useValue: scrollServiceMock },
-        { provide: AttachmentService, useValue: attachmentServiceMock },
-        { provide: TranslationService, useValue: translationServiceMock },
-        { provide: OverlayModalService, useValue: overlayModalServiceMock }
-      ]
+  beforeEach(
+    async(() => {
+      TestBed.configureTestingModule({
+        declarations: [
+          TagsPipe,
+          DomainPipe,
+          AbbrPipe,
+          MindsRichEmbed,
+          MaterialMock,
+          HovercardMock,
+          WireLockScreenComponentMock,
+          TranslateMock,
+          WireThresholdInputComponentMock,
+          PosterMock,
+          VideoComponentMock,
+          VideoAdsMock,
+          RemindMock,
+          ThumbsUpButtonMock,
+          ThumbsDownButtonMock,
+          ButtonCommentMock,
+          ButtonRemindMock,
+          MindsCommentsMock,
+          WireButtonMock,
+          ModalShareMock,
+          ModalReportMock,
+          ModalConfirmMock,
+          ReadMoreButtonComponentMock,
+          AutoGrowMock,
+          Activity
+        ], // declare the test component
+        imports: [RouterTestingModule, FormsModule /*, CommonModule*/],
+        providers: [
+          {provide: Client, useValue: clientMock},
+          {provide: ScrollService, useValue: scrollServiceMock},
+          {provide: AttachmentService, useValue: attachmentServiceMock},
+          {provide: TranslationService, useValue: translationServiceMock},
+          {provide: OverlayModalService, useValue: overlayModalServiceMock}
+        ]
+      }).compileComponents(); // compile template and css
     })
-      .compileComponents();  // compile template and css
-  }));
+  );
 
   // synchronous beforeEach
   beforeEach(() => {
@@ -385,7 +438,9 @@ describe('Activity', () => {
   });
 
   it('should show m-wire--lock-screen if activity.paywal == true', () => {
-    expect(fixture.debugElement.query(By.css('m-wire--lock-screen'))).not.toBeNull();
+    expect(
+      fixture.debugElement.query(By.css('m-wire--lock-screen'))
+    ).not.toBeNull();
   });
   it('shouldn\'t show m-wire--lock-screen if activity.paywal == false', () => {
     const activity = {
@@ -401,12 +456,14 @@ describe('Activity', () => {
         money: 3
       },
       impressions: 100,
-      paywall: false,
+      paywall: false
     };
     comp.activity = activity;
 
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('m-wire--lock-screen'))).toBeNull();
+    expect(
+      fixture.debugElement.query(By.css('m-wire--lock-screen'))
+    ).toBeNull();
   });
 
   it('should have activity metrics', () => {
